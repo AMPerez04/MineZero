@@ -6,20 +6,14 @@ import boomcow.minezero.checkpoint.CheckpointManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.jmx.Server;
 
 @Mod.EventBusSubscriber
 public class CheckpointTicker {
@@ -32,6 +26,7 @@ public class CheckpointTicker {
     private static boolean randomIntervalSelected = false;
 
     private static int intervalTicks = 0;
+    public static Random random = new Random();
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
@@ -92,8 +87,6 @@ public class CheckpointTicker {
             lastCheckpointTick = currentTick;
             return;
         }
-
-        Random random = new Random();
 
         if (currentTick - lastCheckpointTick >= nextCheckpointInterval) {
             CheckpointData data = CheckpointData.get(level);
