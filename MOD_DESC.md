@@ -60,3 +60,12 @@ While _MineZero_ focuses on **Return by Death**, _Re:Zero Experience_ brings in 
 
 *   **Usage:** `/gamerule fluteCooldownDuration <seconds>`
 *   **Description:** Sets the duration (in seconds) of the cooldown period for the Artifact Flute.
+* 
+### Random Anchor
+
+*   **Usage:** `/gamerule enableRandomAnchor false`
+*   **Description:** Enables wether the checkpoint should be set by random players.
+
+### All Players Return By Death
+*   **Usage:** `/gamerule enableAllPlayersRBD false`
+*   **Description:** Enables wether the checkpoint shall be restored if any player dies (true) or only when the anchor dies (false).

@@ -6,12 +6,20 @@ import boomcow.minezero.checkpoint.CheckpointManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.jmx.Server;
 
 @Mod.EventBusSubscriber
 public class CheckpointTicker {
@@ -85,18 +93,31 @@ public class CheckpointTicker {
             return;
         }
 
+        Random random = new Random();
+
         if (currentTick - lastCheckpointTick >= nextCheckpointInterval) {
             CheckpointData data = CheckpointData.get(level);
             if (data.getAnchorPlayerUUID() == null) {
                 if (!server.getPlayerList().getPlayers().isEmpty()) {
                     ServerPlayer firstPlayer = server.getPlayerList().getPlayers().get(0);
                     data.setAnchorPlayerUUID(firstPlayer.getUUID());
-
                 } else {
                     LOGGER.warn("No players online to set as anchor.");
                     return;
                 }
+
             }
+
+            // Random anchor logic
+            if (level.getGameRules().getRule(ModGameRules.RANDOM_ANCHOR_ENABLED).get()) {
+                int playerAmount = server.getPlayerCount();
+                int randomInt = random.nextInt(playerAmount);
+                ServerPlayer randomPlayer = server.getPlayerList().getPlayers().get(randomInt);
+                data.setAnchorPlayerUUID(randomPlayer.getUUID());
+                LOGGER.debug("Player {} is set as new Anchor.", randomPlayer.getName());
+            }
+
+
             ServerPlayer anchorPlayer = server.getPlayerList().getPlayer(data.getAnchorPlayerUUID());
             if (anchorPlayer != null) {
 

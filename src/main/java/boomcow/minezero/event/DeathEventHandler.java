@@ -1,6 +1,7 @@
 package boomcow.minezero.event;
 
 import boomcow.minezero.ConfigHandler;
+import boomcow.minezero.ModGameRules;
 import boomcow.minezero.ModSoundEvents;
 import boomcow.minezero.checkpoint.CheckpointData;
 import boomcow.minezero.checkpoint.CheckpointManager;
@@ -32,7 +33,12 @@ public class DeathEventHandler {
                 CheckpointTicker.lastCheckpointTick = server.getTickCount();
             }
 
-            if (data.getAnchorPlayerUUID() == null || !player.getUUID().equals(data.getAnchorPlayerUUID())) {
+            if (data.getAnchorPlayerUUID() == null
+                    ||
+                (!player.getUUID().equals(data.getAnchorPlayerUUID()) &&
+                        !level.getGameRules().getRule(ModGameRules.ALL_PLAYERS_RBD).get())
+                ) // Check wether gamerule is enabled, if not, it does not matter who dies --> activate your logic anyway
+            {
 
                 return;
             }
