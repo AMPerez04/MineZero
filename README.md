@@ -24,6 +24,8 @@ Get releases on CurseForge: [MineZero — Return By Death](https://www.curseforg
 * **Anchor Player System**
 
   * Only the **anchor player’s death** triggers a reset.
+    * This can be changed via the gamerule **"enableAllPlayersRBD"**
+    * Alternatively you can let the anchor be randomly chosen on each new checkpoint with **"enableRandomAnchor"**
   * The anchor player is set automatically when they create a checkpoint.
 
 * **World Reset on Death**
