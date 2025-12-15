@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.phys.Vec3;
@@ -262,6 +263,14 @@ public class CheckpointManager {
                         worldData.isThundering() ? 1.0F : 0.0F));
             }
 
+            // --- CRITICAL LOGIC FIX ---
+            // If a block was "Mined" (or picked up) but it was also "Modified" (created) in this session,
+            // it means the player created it then destroyed it.
+            // RBY should behave as if it was created (Modified), so it should disappear (revert to checkpoint state).
+            // Removing it from minedBlocks ensures we don't restore the "broken" state (e.g. putting water back).
+            worldData.minedBlocks.keySet().removeAll(worldData.modifiedBlocks);
+            worldData.minedFluidBlocks.keySet().removeAll(worldData.modifiedFluidBlocks);
+
             for (BlockPos pos : worldData.modifiedBlocks) {
                 int dimIndex = worldData.blockDimensionIndices.get(pos);
                 ServerLevel dimLevel = level.getServer().getLevel(WorldData.getDimensionFromIndex(dimIndex));
@@ -290,19 +299,14 @@ public class CheckpointManager {
 
             for (BlockPos pos : worldData.modifiedFluidBlocks) {
                 if (!worldData.blockDimensionIndices.containsKey(pos)) {
-                    logger.info("No dimension index for modified fluid block at " + pos);
                     continue;
                 }
-
-                logger.debug("Restoring fluid block at " + pos);
 
                 int dimIndex = worldData.blockDimensionIndices.get(pos);
                 ServerLevel dimLevel = level.getServer().getLevel(WorldData.getDimensionFromIndex(dimIndex));
                 if (dimLevel != null) {
-                    BlockState currentState = dimLevel.getBlockState(pos);
-                    if (!currentState.isAir()) {
-                        cleanupFlowingFluid(dimLevel, pos);
-                    }
+                    // Always try to cleanup fluid, even if currently air (residue might exist)
+                    cleanupFlowingFluid(dimLevel, pos);
                 }
             }
 
@@ -311,7 +315,6 @@ public class CheckpointManager {
                 BlockState originalState = entry.getValue();
 
                 if (!worldData.blockDimensionIndices.containsKey(pos)) {
-                    logger.info("No dimension index for modified fluid block at " + pos);
                     continue;
                 }
 
@@ -319,7 +322,6 @@ public class CheckpointManager {
                 ServerLevel dimLevel = level.getServer().getLevel(WorldData.getDimensionFromIndex(dimIndex));
                 if (dimLevel != null) {
                     BlockState currentState = dimLevel.getBlockState(pos);
-
                     if (currentState.isAir()) {
                         dimLevel.setBlock(pos, originalState, 3);
                     }
@@ -553,7 +555,28 @@ public class CheckpointManager {
 
     private static void cleanupFlowingFluid(ServerLevel level, BlockPos startPos) {
         BlockState startState = level.getBlockState(startPos);
-        Fluid targetFluid = startState.getFluidState().getType();
+        Fluid targetFluid = Fluids.EMPTY;
+
+        // Determine fluid type. If AIR (picked up), verify neighbors.
+        if (startState.getBlock() instanceof LiquidBlock) {
+             targetFluid = startState.getFluidState().getType();
+        } else if (startState.hasProperty(BlockStateProperties.WATERLOGGED) && startState.getValue(BlockStateProperties.WATERLOGGED)) {
+             targetFluid = Fluids.WATER;
+        } else if (startState.isAir()) {
+             // Heuristic: If we are cleaning up air, check neighbors for fluid to identify what residue to clean
+             for(Direction dir : Direction.values()) {
+                 BlockState nState = level.getBlockState(startPos.relative(dir));
+                 if(!nState.getFluidState().isEmpty()) {
+                     targetFluid = nState.getFluidState().getType();
+                     break;
+                 }
+             }
+        }
+
+        if (targetFluid == Fluids.EMPTY) {
+            // Nothing to clean
+            return;
+        }
         
         Queue<BlockPos> queue = new LinkedList<>();
         queue.add(startPos);
@@ -568,16 +591,19 @@ public class CheckpointManager {
 
             BlockState currentState = level.getBlockState(current);
 
-            // Parser Logic: Check the token type (BlockState properties)
+            // Parser Logic
             if (currentState.getBlock() instanceof LiquidBlock) {
-                // If it's a pure liquid block, set to AIR
-                level.setBlock(current, Blocks.AIR.defaultBlockState(), 3);
+                // If it's a pure liquid block matching our target, set to AIR
+                if (currentState.getFluidState().getType().isSame(targetFluid)) {
+                    level.setBlock(current, Blocks.AIR.defaultBlockState(), 3);
+                }
             } else if (currentState.hasProperty(BlockStateProperties.WATERLOGGED) && currentState.getValue(BlockStateProperties.WATERLOGGED)) {
-                // If it's a waterlogged block (e.g. Fence), unset the waterlogged property
-                level.setBlock(current, currentState.setValue(BlockStateProperties.WATERLOGGED, false), 3);
-            } else if (current.equals(startPos)) {
-                // Force removal of start pos if it doesn't match above but triggered cleanup
-                 level.setBlock(current, Blocks.AIR.defaultBlockState(), 3);
+                // If it's waterlogged and we are cleaning water, unset it
+                if (targetFluid.isSame(Fluids.WATER)) {
+                    level.setBlock(current, currentState.setValue(BlockStateProperties.WATERLOGGED, false), 3);
+                }
+            } else if (current.equals(startPos) && currentState.isAir()) {
+                // Already air, do nothing but continue search
             }
 
             count++;
