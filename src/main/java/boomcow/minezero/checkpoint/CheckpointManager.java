@@ -4,6 +4,7 @@ import boomcow.minezero.util.LightningScheduler;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.resources.ResourceKey;
@@ -27,8 +28,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EndPortalFrameBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.PrimaryLevelData;
@@ -133,7 +136,6 @@ public class CheckpointManager {
                         entityList.add(entityNBT);
                         entityDimensions.add(serverLevel.dimension());
 
-                        // Save aggro target
                         if (mob.getTarget() != null) {
                             entityAggroTargets.put(mob.getUUID(), mob.getTarget().getUUID());
                         }
@@ -284,7 +286,6 @@ public class CheckpointManager {
             }
 
             for (BlockPos pos : worldData.modifiedFluidBlocks) {
-
                 if (!worldData.blockDimensionIndices.containsKey(pos)) {
                     logger.info("No dimension index for modified fluid block at " + pos);
                     continue;
@@ -296,9 +297,13 @@ public class CheckpointManager {
                 ServerLevel dimLevel = level.getServer().getLevel(WorldData.getDimensionFromIndex(dimIndex));
                 if (dimLevel != null) {
                     BlockState currentState = dimLevel.getBlockState(pos);
-
                     if (!currentState.isAir()) {
-                        dimLevel.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                        Block block = currentState.getBlock();
+                        if (block instanceof LiquidBlock) {
+                            cleanupFlowingFluid(dimLevel, pos, block);
+                        } else {
+                            dimLevel.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                        }
                     }
                 }
             }
@@ -357,6 +362,7 @@ public class CheckpointManager {
                     if (blockEntity != null) {
                         blockEntity.load(entry.getValue());
                         blockEntity.setChanged();
+                        dimLevel.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
                     }
                 }
             }
@@ -537,6 +543,11 @@ public class CheckpointManager {
                 }
             }
 
+            for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+                ChunkPos cp = player.chunkPosition();
+                level.getChunkSource().updateChunkInNaturalSpawn(cp.x, cp.z);
+            }
+
             long endTime = System.nanoTime();
             long durationMs = (endTime - startTime) / 1_000_000;
             logger.debug("Restoring states took {} ms", durationMs);
@@ -547,4 +558,35 @@ public class CheckpointManager {
         }
     }
 
+    private static void cleanupFlowingFluid(ServerLevel level, BlockPos startPos, Block fluidBlock) {
+        Queue<BlockPos> queue = new LinkedList<>();
+        queue.add(startPos);
+        Set<BlockPos> visited = new HashSet<>();
+        visited.add(startPos);
+
+        int count = 0;
+        int maxBlocks = 400;
+
+        while (!queue.isEmpty() && count < maxBlocks) {
+            BlockPos current = queue.poll();
+
+            level.setBlock(current, Blocks.AIR.defaultBlockState(), 3);
+            count++;
+
+            for (Direction dir : Direction.values()) {
+                BlockPos neighbor = current.relative(dir);
+                if (!visited.contains(neighbor)) {
+                    BlockState nState = level.getBlockState(neighbor);
+                    
+                    if (nState.getBlock() == fluidBlock) {
+                        if (nState.getFluidState().isSource() && !neighbor.equals(startPos)) {
+                            continue;
+                        }
+                        visited.add(neighbor);
+                        queue.add(neighbor);
+                    }
+                }
+            }
+        }
+    }
 }
