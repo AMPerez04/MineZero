@@ -41,24 +41,47 @@ public class NonPlayerChangeHandler {
     public static void onFirePlaced(EntityPlaceEvent event) {
         if (!(event.getLevel() instanceof ServerLevel level))
             return;
-        Logger logger = LogManager.getLogger();
+        
+        CheckpointData data = CheckpointData.get(level);
+        long now = level.getGameTime();
+        if (now <= data.getWorldData().getCheckpointTick()) return;
+
+        WorldData worldData = data.getWorldData();
+        BlockPos pos = event.getPos();
+        
+        // Scenario 1: Fire spreads (Block becomes Fire)
         if (event.getPlacedBlock().getBlock() == Blocks.FIRE) {
-            CheckpointData data = CheckpointData.get(level);
-            long now = level.getGameTime();
-            if (now > data.getWorldData().getCheckpointTick()) {
-                WorldData worldData = data.getWorldData();
-                BlockPos pos = event.getPos();
-                worldData.getNewFires().add(pos);
+            worldData.getNewFires().add(pos);
+            BlockState oldState = event.getBlockSnapshot().getReplacedBlock();
 
-                BlockState oldState = event.getBlockSnapshot().getReplacedBlock();
-
-                if (!oldState.isAir() && oldState.getBlock() != Blocks.FIRE) {
-                    if (!worldData.getMinedBlocks().containsKey(pos) && !worldData.getModifiedBlocks().contains(pos)) {
-                        worldData.getMinedBlocks().put(pos, oldState);
-                        worldData.getInstanceBlockDimensionIndices().put(pos, WorldData.getDimensionIndex(level.dimension()));
-                    }
+            if (!oldState.isAir() && oldState.getBlock() != Blocks.FIRE) {
+                if (!worldData.getMinedBlocks().containsKey(pos) && !worldData.getModifiedBlocks().contains(pos)) {
+                    worldData.getMinedBlocks().put(pos, oldState);
+                    worldData.getInstanceBlockDimensionIndices().put(pos, WorldData.getDimensionIndex(level.dimension()));
                 }
             }
+        } 
+        // Scenario 2: Fire burns a block completely (Block becomes Air)
+        else if (event.getPlacedBlock().isAir()) {
+             BlockState oldState = event.getBlockSnapshot().getReplacedBlock();
+             // Check if it was a solid block that disappeared
+             if (!oldState.isAir() && oldState.getBlock() != Blocks.FIRE) {
+                 // Verify if there is fire nearby to attribute this disappearance to burning
+                 boolean isFireNearby = false;
+                 for(Direction dir : Direction.values()) {
+                     if (level.getBlockState(pos.relative(dir)).getBlock() == Blocks.FIRE) {
+                         isFireNearby = true;
+                         break;
+                     }
+                 }
+                 
+                 if (isFireNearby) {
+                     if (!worldData.getMinedBlocks().containsKey(pos) && !worldData.getModifiedBlocks().contains(pos)) {
+                        worldData.getMinedBlocks().put(pos, oldState);
+                        worldData.getInstanceBlockDimensionIndices().put(pos, WorldData.getDimensionIndex(level.dimension()));
+                     }
+                 }
+             }
         }
     }
 
