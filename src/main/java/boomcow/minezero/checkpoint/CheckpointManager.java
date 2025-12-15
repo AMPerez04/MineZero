@@ -32,8 +32,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EndPortalFrameBlock;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -299,12 +301,7 @@ public class CheckpointManager {
                 if (dimLevel != null) {
                     BlockState currentState = dimLevel.getBlockState(pos);
                     if (!currentState.isAir()) {
-                        Block block = currentState.getBlock();
-                        if (block instanceof LiquidBlock) {
-                            cleanupFlowingFluid(dimLevel, pos);
-                        } else {
-                            dimLevel.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-                        }
+                        cleanupFlowingFluid(dimLevel, pos);
                     }
                 }
             }
@@ -563,8 +560,6 @@ public class CheckpointManager {
         BlockState startState = level.getBlockState(startPos);
         Fluid targetFluid = startState.getFluidState().getType();
         
-        level.setBlock(startPos, Blocks.AIR.defaultBlockState(), 3);
-        
         Queue<BlockPos> queue = new LinkedList<>();
         queue.add(startPos);
         Set<BlockPos> visited = new HashSet<>();
@@ -576,17 +571,31 @@ public class CheckpointManager {
         while (!queue.isEmpty() && count < maxBlocks) {
             BlockPos current = queue.poll();
 
+            BlockState currentState = level.getBlockState(current);
+
+            // Parser Logic: Check the token type (BlockState properties)
+            if (currentState.getBlock() instanceof LiquidBlock) {
+                // If it's a pure liquid block, set to AIR
+                level.setBlock(current, Blocks.AIR.defaultBlockState(), 3);
+            } else if (currentState.hasProperty(BlockStateProperties.WATERLOGGED) && currentState.getValue(BlockStateProperties.WATERLOGGED)) {
+                // If it's a waterlogged block (e.g. Fence), unset the waterlogged property
+                level.setBlock(current, currentState.setValue(BlockStateProperties.WATERLOGGED, false), 3);
+            } else if (current.equals(startPos)) {
+                // Force removal of start pos if it doesn't match above but triggered cleanup
+                 level.setBlock(current, Blocks.AIR.defaultBlockState(), 3);
+            }
+
+            count++;
+
             for (Direction dir : Direction.values()) {
                 BlockPos neighbor = current.relative(dir);
                 if (!visited.contains(neighbor)) {
                     BlockState nState = level.getBlockState(neighbor);
                     
+                    // Recursive Parser: Consume neighbor if it matches the fluid type
                     if (nState.getFluidState().getType().isSame(targetFluid)) {
                         visited.add(neighbor);
                         queue.add(neighbor);
-                        
-                        level.setBlock(neighbor, Blocks.AIR.defaultBlockState(), 3);
-                        count++;
                     }
                 }
             }
