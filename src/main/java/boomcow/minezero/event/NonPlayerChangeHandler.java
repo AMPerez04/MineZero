@@ -46,7 +46,18 @@ public class NonPlayerChangeHandler {
             CheckpointData data = CheckpointData.get(level);
             long now = level.getGameTime();
             if (now > data.getWorldData().getCheckpointTick()) {
-                data.getWorldData().getNewFires().add(event.getPos());
+                WorldData worldData = data.getWorldData();
+                BlockPos pos = event.getPos();
+                worldData.getNewFires().add(pos);
+
+                BlockState oldState = event.getBlockSnapshot().getReplacedBlock();
+
+                if (!oldState.isAir() && oldState.getBlock() != Blocks.FIRE) {
+                    if (!worldData.getMinedBlocks().containsKey(pos) && !worldData.getModifiedBlocks().contains(pos)) {
+                        worldData.getMinedBlocks().put(pos, oldState);
+                        worldData.getInstanceBlockDimensionIndices().put(pos, WorldData.getDimensionIndex(level.dimension()));
+                    }
+                }
             }
         }
     }
