@@ -27,7 +27,6 @@ public class WorldData {
 
     private static final Logger LOGGER_WD = LogManager.getLogger("MineZeroWorldData");
 
-    // NBT Keys for WorldData
     private static final String KEY_WD_IS_RAINING = "wd_isRaining";
     private static final String KEY_WD_IS_THUNDERING = "wd_isThundering";
     private static final String KEY_WD_RAIN_TIME = "wd_rainTime";
@@ -51,7 +50,6 @@ public class WorldData {
     private static final String KEY_WD_NEW_FIRES = "wd_newFires";
     private static final String KEY_WD_BLOCK_STATES_LEGACY = "wd_blockStatesLegacy";
 
-    // Keys for inner structures within NBT
     private static final String KEY_POS = "pos";
     private static final String KEY_STATE = "state";
     private static final String KEY_DIMENSION = "dimension";
@@ -109,9 +107,6 @@ public class WorldData {
         this.dayTime = 0;
     }
 
-    /**
-     * Returns an index for the given dimension, creating one if necessary.
-     */
     public static int getDimensionIndex(ResourceKey<Level> dimension) {
         for (Map.Entry<Integer, ResourceKey<Level>> entry : dimensionMap.entrySet()) {
             if (entry.getValue().equals(dimension)) {
@@ -139,14 +134,22 @@ public class WorldData {
         return dimensionMap.get(index);
     }
 
-    /**
-     * Saves a block state:
-     * - Adds the saved block to a chunk-based map for optimized restoration.
-     * - Updates legacy global lists/maps (blockPositions, blockStates,
-     * blockDimensionIndices) for compatibility.
-     */
-    public void saveBlockState(BlockPos pos, BlockState state, ResourceKey<Level> dimension) {
+    public void trackBlockBeforeChange(ServerLevel level, BlockPos pos) {
+        if (minedBlocks.containsKey(pos) || modifiedBlocks.contains(pos)) {
+            return;
+        }
 
+        BlockState currentState = level.getBlockState(pos);
+        
+        this.minedBlocks.put(pos, currentState);
+        this.blockDimensionIndices.put(pos, getDimensionIndex(level.dimension()));
+        
+        ChunkPos chunkPos = new ChunkPos(pos);
+        SavedBlock saved = new SavedBlock(pos, currentState, level.dimension());
+        this.savedBlocksByChunk.computeIfAbsent(chunkPos, k -> new ArrayList<>()).add(saved);
+    }
+
+    public void saveBlockState(BlockPos pos, BlockState state, ResourceKey<Level> dimension) {
         ChunkPos chunkPos = new ChunkPos(pos);
         SavedBlock saved = new SavedBlock(pos, state, dimension);
         savedBlocksByChunk.computeIfAbsent(chunkPos, k -> new ArrayList<>()).add(saved);
@@ -156,9 +159,6 @@ public class WorldData {
         blockDimensionIndices.put(pos, getDimensionIndex(dimension));
     }
 
-    /**
-     * Returns the saved blocks grouped by chunk.
-     */
     public Map<ChunkPos, List<SavedBlock>> getSavedBlocksByChunk() {
         return this.savedBlocksByChunk;
     }
@@ -304,9 +304,6 @@ public class WorldData {
         return this.destroyedPortals;
     }
 
-    /**
-     * Clears all saved world data.
-     */
     public void clearWorldData() {
         minedBlocks.clear();
         modifiedBlocks.clear();
@@ -333,10 +330,6 @@ public class WorldData {
         addedEyes.clear();
     }
 
-    /**
-     * Saves all loaded chunks within players' render distance.
-     * Blocks that are air are skipped.
-     */
     public void saveAllLoadedChunks(ServerLevel level) {
         Logger logger = LogManager.getLogger();
         ServerChunkCache chunkCache = level.getChunkSource();
@@ -375,7 +368,6 @@ public class WorldData {
         }
     }
 
-    // --- SERIALIZATION (NBT) ---
     public CompoundTag saveToNBT(CompoundTag nbt) {
         nbt.putBoolean(KEY_WD_IS_RAINING, this.isRaining);
         nbt.putBoolean(KEY_WD_IS_THUNDERING, this.isThundering);
@@ -620,9 +612,6 @@ public class WorldData {
         LOGGER_WD.debug("WorldData instance loaded from NBT.");
     }
 
-    /**
-     * Record to store saved block data.
-     */
     public static record SavedBlock(BlockPos pos, BlockState state, ResourceKey<Level> dimension) {
 
         public CompoundTag toNBT() {
