@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.EndPortalFrameBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.phys.Vec3;
@@ -279,7 +280,7 @@ public class CheckpointManager {
 
                 if (dimLevel != null) {
                     BlockState currentState = dimLevel.getBlockState(pos);
-                    if (currentState.isAir()) {
+                    if (currentState.isAir() || currentState.getBlock() == Blocks.FIRE) {
                         dimLevel.setBlock(pos, originalState, 2);
                     }
                 }
@@ -300,7 +301,7 @@ public class CheckpointManager {
                     if (!currentState.isAir()) {
                         Block block = currentState.getBlock();
                         if (block instanceof LiquidBlock) {
-                            cleanupFlowingFluid(dimLevel, pos, block);
+                            cleanupFlowingFluid(dimLevel, pos);
                         } else {
                             dimLevel.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
                         }
@@ -558,32 +559,34 @@ public class CheckpointManager {
         }
     }
 
-    private static void cleanupFlowingFluid(ServerLevel level, BlockPos startPos, Block fluidBlock) {
+    private static void cleanupFlowingFluid(ServerLevel level, BlockPos startPos) {
+        BlockState startState = level.getBlockState(startPos);
+        Fluid targetFluid = startState.getFluidState().getType();
+        
+        level.setBlock(startPos, Blocks.AIR.defaultBlockState(), 3);
+        
         Queue<BlockPos> queue = new LinkedList<>();
         queue.add(startPos);
         Set<BlockPos> visited = new HashSet<>();
         visited.add(startPos);
 
         int count = 0;
-        int maxBlocks = 400;
+        int maxBlocks = 800;
 
         while (!queue.isEmpty() && count < maxBlocks) {
             BlockPos current = queue.poll();
-
-            level.setBlock(current, Blocks.AIR.defaultBlockState(), 3);
-            count++;
 
             for (Direction dir : Direction.values()) {
                 BlockPos neighbor = current.relative(dir);
                 if (!visited.contains(neighbor)) {
                     BlockState nState = level.getBlockState(neighbor);
                     
-                    if (nState.getBlock() == fluidBlock) {
-                        if (nState.getFluidState().isSource() && !neighbor.equals(startPos)) {
-                            continue;
-                        }
+                    if (nState.getFluidState().getType().isSame(targetFluid)) {
                         visited.add(neighbor);
                         queue.add(neighbor);
+                        
+                        level.setBlock(neighbor, Blocks.AIR.defaultBlockState(), 3);
+                        count++;
                     }
                 }
             }
