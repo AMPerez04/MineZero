@@ -541,11 +541,6 @@ public class CheckpointManager {
                 }
             }
 
-            for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
-                ChunkPos cp = player.chunkPosition();
-                level.getChunkSource().updateChunkInNaturalSpawn(cp.x, cp.z);
-            }
-
             long endTime = System.nanoTime();
             long durationMs = (endTime - startTime) / 1_000_000;
             logger.debug("Restoring states took {} ms", durationMs);
