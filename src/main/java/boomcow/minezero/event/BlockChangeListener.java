@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -127,7 +128,18 @@ public class BlockChangeListener {
         ItemStack stack = event.getItemStack();
         if (stack.getItem() instanceof BucketItem bucketItem) {
             BlockPos clickedPos = event.getPos().immutable();
+            BlockState clickedState = level.getBlockState(clickedPos);
+            
+            // Default target is adjacent, but if clicked block is waterloggable and we have liquid, use clickedPos
             BlockPos targetPos = clickedPos.relative(event.getFace()).immutable();
+            
+            boolean isWaterloggable = clickedState.getBlock() instanceof SimpleWaterloggedBlock 
+                && clickedState.hasProperty(BlockStateProperties.WATERLOGGED)
+                && !clickedState.getValue(BlockStateProperties.WATERLOGGED);
+
+            if (isWaterloggable && (bucketItem.getFluid() == Fluids.WATER || bucketItem.getFluid() == Fluids.LAVA)) {
+                 targetPos = clickedPos;
+            }
 
             if (bucketItem.getFluid() == Fluids.LAVA || bucketItem.getFluid() == Fluids.WATER) {
                 worldDataInstance.getModifiedFluidBlocks().add(targetPos);
