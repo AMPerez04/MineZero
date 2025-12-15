@@ -7,6 +7,7 @@ import boomcow.minezero.command.SetCheckPointCommand;
 import boomcow.minezero.command.SetSubaruPlayer;
 import boomcow.minezero.command.TriggerRBD;
 import boomcow.minezero.event.DeathEventHandler;
+import boomcow.minezero.event.NatureChangeListener;
 import boomcow.minezero.input.KeyBindings;
 import boomcow.minezero.items.ArtifactFluteItem;
 import boomcow.minezero.network.PacketHandler;
@@ -80,6 +81,7 @@ public class MineZero {
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new DeathEventHandler());
+        MinecraftForge.EVENT_BUS.register(new NatureChangeListener());
 
         ModSoundEvents.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.COMMON_CONFIG);
