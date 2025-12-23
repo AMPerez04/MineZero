@@ -6,6 +6,12 @@
 
 
 
+## CurseForge
+
+Get releases on CurseForge: [MineZero — Return By Death](https://www.curseforge.com/minecraft/mc-mods/mine-zero-return-by-death)
+
+---
+
 ## Features
 
 * **Checkpoints**
@@ -18,6 +24,8 @@
 * **Anchor Player System**
 
   * Only the **anchor player’s death** triggers a reset.
+    * This can be changed via the gamerule **"enableAllPlayersRBD"**
+    * Alternatively you can let the anchor be randomly chosen on each new checkpoint with **"enableRandomAnchor"**
   * The anchor player is set automatically when they create a checkpoint.
 
 * **World Reset on Death**
@@ -40,6 +48,15 @@ This repository maintains multiple branches for different versions and mod loade
 * `1.12.2-forge` – Legacy Forge support, Minecraft 1.12.2.
 
 ---
+
+## Version Status
+
+| Branch           | Loader    | MC Version | Status     |
+|------------------|-----------|------------|------------|
+| 1.20.1-forge     | Forge     | 1.20.1     | Released   |
+| 1.21.1-neoforge  | NeoForge  | 1.21.1     | Released   |
+| 1.21.1-fabric    | Fabric    | 1.21.1     | In Progress |
+| 1.12.2-forge     | Forge     | 1.12.2     | In Progress |
 
 ## Commands
 
