@@ -57,4 +57,13 @@ public class ModGameRules {
         // Default: true
         public static final GameRules.Key<BooleanValue> SET_CHECKPOINT_ON_WORLD_CREATION = GameRules.register(
                         "setCheckpointOnWorldCreation", GameRules.Category.PLAYER, GameRules.BooleanValue.create(true));
+
+        // Enable wether the mod should randomly choose an anchor on each
+        public static final GameRules.Key<BooleanValue> RANDOM_ANCHOR_ENABLED = GameRules.register(
+                "enableRandomAnchor", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false));
+
+        // Enable wether all players on the Server should be an anchor
+        public static final GameRules.Key<BooleanValue> ALL_PLAYERS_RBD = GameRules.register(
+                "enableAllPlayersRBD", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false));
+
 }

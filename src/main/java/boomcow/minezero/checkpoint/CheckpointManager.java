@@ -115,6 +115,11 @@ public class CheckpointManager {
             }
             pdata.advancements = advTag;
 
+            CompoundTag serialized = player.serializeNBT();
+            if (serialized.contains("ForgeCaps")) {
+                pdata.forgeCaps = serialized.getCompound("ForgeCaps").copy();
+            }
+
             data.savePlayerData(player.getUUID(), pdata);
         }
 
@@ -444,6 +449,12 @@ public class CheckpointManager {
                     player.getInventory().clearContent();
                     for (int i = 0; i < pdata.inventory.size(); i++) {
                         player.getInventory().setItem(i, pdata.inventory.get(i));
+                    }
+
+                    if (pdata.forgeCaps != null && !pdata.forgeCaps.isEmpty()) {
+                        CompoundTag current = player.serializeNBT();
+                        current.put("ForgeCaps", pdata.forgeCaps.copy());
+                        player.deserializeNBT(current);
                     }
                 }
             }

@@ -9,6 +9,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +26,7 @@ public class CheckpointTicker {
     private static boolean randomIntervalSelected = false;
 
     private static int intervalTicks = 0;
+    public static Random random = new Random();
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
@@ -91,12 +94,23 @@ public class CheckpointTicker {
                 if (!server.getPlayerList().getPlayers().isEmpty()) {
                     ServerPlayer firstPlayer = server.getPlayerList().getPlayers().get(0);
                     data.setAnchorPlayerUUID(firstPlayer.getUUID());
-
                 } else {
                     LOGGER.warn("No players online to set as anchor.");
                     return;
                 }
+
             }
+
+            // Random anchor logic
+            if (level.getGameRules().getRule(ModGameRules.RANDOM_ANCHOR_ENABLED).get()) {
+                int playerAmount = server.getPlayerCount();
+                int randomInt = random.nextInt(playerAmount);
+                ServerPlayer randomPlayer = server.getPlayerList().getPlayers().get(randomInt);
+                data.setAnchorPlayerUUID(randomPlayer.getUUID());
+                LOGGER.debug("Player {} is set as new Anchor.", randomPlayer.getName());
+            }
+
+
             ServerPlayer anchorPlayer = server.getPlayerList().getPlayer(data.getAnchorPlayerUUID());
             if (anchorPlayer != null) {
 

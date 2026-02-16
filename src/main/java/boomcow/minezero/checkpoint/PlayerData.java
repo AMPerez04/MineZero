@@ -39,6 +39,7 @@ public class PlayerData {
     public List<MobEffectInstance> potionEffects = new ArrayList<>();
 
     public CompoundTag advancements = new CompoundTag();
+    public CompoundTag forgeCaps = new CompoundTag();
 
     public CompoundTag toNBT() {
         CompoundTag tag = new CompoundTag();
@@ -63,6 +64,10 @@ public class PlayerData {
         tag.putDouble("SpawnY", spawnY);
         tag.putDouble("SpawnZ", spawnZ);
         tag.putBoolean("SpawnForced", spawnForced);
+
+        if (forgeCaps != null && !forgeCaps.isEmpty()) {
+            tag.put("ForgeCaps", forgeCaps.copy());
+        }
 
         if (spawnDimension != null) {
             tag.putString("SpawnDimension", spawnDimension.location().toString());
@@ -135,6 +140,10 @@ public class PlayerData {
 
         if (tag.contains("Advancements")) {
             data.advancements = tag.getCompound("Advancements");
+        }
+
+        if (tag.contains("ForgeCaps")) {
+            data.forgeCaps = tag.getCompound("ForgeCaps").copy();
         }
 
         if (tag.contains("Dimension")) {
