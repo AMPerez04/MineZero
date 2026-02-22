@@ -1,0 +1,16 @@
+[
+{
+  "modid": "minezero",
+  "name": "MineZero",
+  "description": "A mod inspired by Re:Zero. When you die, you return to a checkpoint.",
+  "version": "${version}",
+  "mcversion": "1.12.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["LethallyGood"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

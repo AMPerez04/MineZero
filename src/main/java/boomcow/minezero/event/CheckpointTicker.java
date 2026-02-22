@@ -37,6 +37,15 @@ public class CheckpointTicker {
         if (level == null)
             return;
 
+        // Sleep checkpoint — deferred from SleepFinishedTimeEvent so it fires after the time-skip
+        if (SleepCheckpointHandler.pendingSleepAnchor != null) {
+            ServerPlayer sleepAnchor = SleepCheckpointHandler.pendingSleepAnchor;
+            SleepCheckpointHandler.pendingSleepAnchor = null;
+            CheckpointManager.setCheckpoint(sleepAnchor);
+            lastCheckpointTick = server.getTickCount();
+            LOGGER.info("Checkpoint set on sleep.");
+        }
+
         var autoRule = level.getGameRules().getRule(ModGameRules.AUTO_CHECKPOINT_ENABLED);
         if (autoRule == null) {
             LOGGER.warn("Auto checkpoint game rule not found in world. Skipping checkpoint ticker.");
