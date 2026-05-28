@@ -4,6 +4,8 @@ import boomcow.minezero.checkpoint.CheckpointData;
 import boomcow.minezero.checkpoint.WorldData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Explosion;
@@ -11,12 +13,15 @@ import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -142,5 +147,28 @@ public class NonPlayerChangeHandler {
     }
 
 
+    @SubscribeEvent
+    public static void onChunkLoad(ChunkEvent.Load event) {
+        if (!(event.getLevel() instanceof ServerLevel level)) return;
 
+        CheckpointData data = CheckpointData.get(level);
+        if (data.getAnchorPlayerUUID() == null) return;
+
+        WorldData worldData = data.getWorldData();
+        if (worldData == null) return;
+
+        int dimIndex = WorldData.getDimensionIndex(level.dimension());
+
+        if (!(event.getChunk() instanceof LevelChunk levelChunk)) return;
+
+        for (BlockEntity be : levelChunk.getBlockEntities().values()) {
+            if (be == null || be.isRemoved()) continue;
+            CompoundTag nbt = be.saveWithFullMetadata(level.registryAccess());
+            if (nbt.contains("LootTable", Tag.TAG_STRING)) {
+                BlockPos pos = be.getBlockPos().immutable();
+                worldData.saveBlockEntity(pos, nbt);
+                worldData.blockDimensionIndices.put(pos, dimIndex);
+            }
+        }
+    }
 }
