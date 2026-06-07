@@ -6,10 +6,12 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.network.protocol.game.ClientboundStopSoundPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -72,6 +74,9 @@ public class CheckpointManager {
 
             pdata.health = player.getHealth();
             pdata.hunger = player.getFoodData().getFoodLevel();
+            pdata.saturation = player.getFoodData().getSaturationLevel();
+            pdata.exhaustion = player.getFoodData().getExhaustionLevel();
+            pdata.airsupply = player.getAirSupply();
             pdata.experienceLevel = player.experienceLevel;
             pdata.experienceProgress = player.experienceProgress;
 
@@ -380,6 +385,9 @@ public class CheckpointManager {
                     }
 
                     player.getFoodData().setFoodLevel(pdata.hunger);
+                    player.getFoodData().setSaturation(pdata.saturation);
+                    player.getFoodData().setExhaustion(pdata.exhaustion);
+                    player.setAirSupply(pdata.airsupply);
                     player.setExperienceLevels(pdata.experienceLevel);
                     player.experienceProgress = pdata.experienceProgress;
 
@@ -535,6 +543,12 @@ public class CheckpointManager {
                 if (level.getBlockState(firePos).getBlock() == Blocks.FIRE) {
                     level.setBlockAndUpdate(firePos, Blocks.AIR.defaultBlockState());
                 }
+            }
+
+            ClientboundStopSoundPacket stopMusicPacket =
+                    new ClientboundStopSoundPacket(null, SoundSource.MUSIC);
+            for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+                player.connection.send(stopMusicPacket);
             }
 
             long endTime = System.nanoTime();
