@@ -30,6 +30,7 @@ public class PlayerData {
     public int experienceLevel;
     public float experienceProgress;
     public int fireTicks;
+    public int selectedHotbarSlot;
     public ResourceKey<Level> dimension;
     public List<ItemStack> inventory = new ArrayList<>();
     public String gameMode;
@@ -61,6 +62,7 @@ public class PlayerData {
         tag.putInt("AirSupply", airsupply);
 
         tag.putInt("FireTicks", fireTicks);
+        tag.putInt("SelectedHotbarSlot", selectedHotbarSlot);
         tag.putString("GameMode", gameMode);
         tag.putInt("ExperienceLevel", experienceLevel);
         tag.putFloat("ExperienceProgress", experienceProgress);
@@ -118,6 +120,7 @@ public class PlayerData {
         data.exhaustion = tag.getFloat("Exhaustion");
         data.airsupply = tag.getInt("AirSupply");
         data.fireTicks = tag.getInt("FireTicks");
+        data.selectedHotbarSlot = tag.contains("SelectedHotbarSlot") ? tag.getInt("SelectedHotbarSlot") : 0;
 
         data.spawnX = tag.getDouble("SpawnX");
         data.spawnY = tag.getDouble("SpawnY");
