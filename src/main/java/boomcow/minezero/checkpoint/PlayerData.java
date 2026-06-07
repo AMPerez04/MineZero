@@ -24,9 +24,13 @@ public class PlayerData {
     public float pitch;
     public float health;
     public int hunger;
+    public float saturation;
+    public float exhaustion;
+    public int airSupply;
     public int experienceLevel;
     public float experienceProgress;
     public int fireTicks;
+    public int selectedHotbarSlot;
     public ResourceKey<Level> dimension;
     public List<ItemStack> inventory = new ArrayList<>();
     public String gameMode;
@@ -53,8 +57,12 @@ public class PlayerData {
         tag.putFloat("Pitch", pitch);
         tag.putFloat("Health", health);
         tag.putInt("Hunger", hunger);
+        tag.putFloat("Saturation", saturation);
+        tag.putFloat("Exhaustion", exhaustion);
+        tag.putInt("AirSupply", airSupply);
 
         tag.putInt("FireTicks", fireTicks);
+        tag.putInt("SelectedHotbarSlot", selectedHotbarSlot);
         tag.putString("GameMode", gameMode);
         tag.putInt("ExperienceLevel", experienceLevel);
         tag.putFloat("ExperienceProgress", experienceProgress);
@@ -108,7 +116,11 @@ public class PlayerData {
         data.pitch = tag.getFloat("Pitch");
         data.health = tag.getFloat("Health");
         data.hunger = tag.getInt("Hunger");
+        data.saturation = tag.getFloat("Saturation");
+        data.exhaustion = tag.getFloat("Exhaustion");
+        data.airSupply = tag.getInt("AirSupply");
         data.fireTicks = tag.getInt("FireTicks");
+        data.selectedHotbarSlot = tag.contains("SelectedHotbarSlot") ? tag.getInt("SelectedHotbarSlot") : 0;
 
         data.spawnX = tag.getDouble("SpawnX");
         data.spawnY = tag.getDouble("SpawnY");
