@@ -24,6 +24,9 @@ public class PlayerData {
     public float pitch;
     public float health;
     public int hunger;
+    public float saturation;
+    public float exhaustion;
+    public int airsupply;
     public int experienceLevel;
     public float experienceProgress;
     public int fireTicks;
@@ -53,6 +56,9 @@ public class PlayerData {
         tag.putFloat("Pitch", pitch);
         tag.putFloat("Health", health);
         tag.putInt("Hunger", hunger);
+        tag.putFloat("Saturation", saturation);
+        tag.putFloat("Exhaustion", exhaustion);
+        tag.putInt("AirSupply", airsupply);
 
         tag.putInt("FireTicks", fireTicks);
         tag.putString("GameMode", gameMode);
@@ -108,6 +114,9 @@ public class PlayerData {
         data.pitch = tag.getFloat("Pitch");
         data.health = tag.getFloat("Health");
         data.hunger = tag.getInt("Hunger");
+        data.saturation = tag.getFloat("Saturation");
+        data.exhaustion = tag.getFloat("Exhaustion");
+        data.airsupply = tag.getInt("AirSupply");
         data.fireTicks = tag.getInt("FireTicks");
 
         data.spawnX = tag.getDouble("SpawnX");
