@@ -6,10 +6,13 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
+import net.minecraft.network.protocol.game.ClientboundStopSoundPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -72,11 +75,15 @@ public class CheckpointManager {
 
             pdata.health = player.getHealth();
             pdata.hunger = player.getFoodData().getFoodLevel();
+            pdata.saturation = player.getFoodData().getSaturationLevel();
+            pdata.exhaustion = player.getFoodData().getExhaustionLevel();
+            pdata.airSupply = player.getAirSupply();
             pdata.experienceLevel = player.experienceLevel;
             pdata.experienceProgress = player.experienceProgress;
 
             logger.info("Player XP: " + player.totalExperience);
             pdata.fireTicks = player.getRemainingFireTicks();
+            pdata.selectedHotbarSlot = player.getInventory().selected;
 
             BlockPos spawn = player.getRespawnPosition();
             ResourceKey<Level> spawnDim = player.getRespawnDimension();
@@ -380,6 +387,9 @@ public class CheckpointManager {
                     }
 
                     player.getFoodData().setFoodLevel(pdata.hunger);
+                    player.getFoodData().setSaturation(pdata.saturation);
+                    player.getFoodData().setExhaustion(pdata.exhaustion);
+                    player.setAirSupply(pdata.airSupply);
                     player.setExperienceLevels(pdata.experienceLevel);
                     player.experienceProgress = pdata.experienceProgress;
 
@@ -445,6 +455,10 @@ public class CheckpointManager {
                     for (int i = 0; i < pdata.inventory.size(); i++) {
                         player.getInventory().setItem(i, pdata.inventory.get(i));
                     }
+                    int selectedHotbarSlot = Math.max(0, Math.min(8, pdata.selectedHotbarSlot));
+                    player.getInventory().selected = selectedHotbarSlot;
+                    player.connection.send(new ClientboundSetCarriedItemPacket(selectedHotbarSlot));
+                    player.containerMenu.broadcastChanges();
                 }
             }
 
@@ -537,6 +551,12 @@ public class CheckpointManager {
                 }
             }
 
+            ClientboundStopSoundPacket stopMusicPacket =
+                    new ClientboundStopSoundPacket(null, SoundSource.MUSIC);
+            for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+                player.connection.send(stopMusicPacket);
+            }
+
             long endTime = System.nanoTime();
             long durationMs = (endTime - startTime) / 1_000_000;
             logger.debug("Restoring states took {} ms", durationMs);
@@ -546,5 +566,4 @@ public class CheckpointManager {
             e.printStackTrace();
         }
     }
-
 }
