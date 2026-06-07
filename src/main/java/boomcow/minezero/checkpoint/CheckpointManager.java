@@ -6,6 +6,7 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 import net.minecraft.network.protocol.game.ClientboundStopSoundPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.ServerAdvancementManager;
@@ -82,6 +83,7 @@ public class CheckpointManager {
 
             logger.info("Player XP: " + player.totalExperience);
             pdata.fireTicks = player.getRemainingFireTicks();
+            pdata.selectedHotbarSlot = player.getInventory().selected;
 
             BlockPos spawn = player.getRespawnPosition();
             ResourceKey<Level> spawnDim = player.getRespawnDimension();
@@ -453,6 +455,10 @@ public class CheckpointManager {
                     for (int i = 0; i < pdata.inventory.size(); i++) {
                         player.getInventory().setItem(i, pdata.inventory.get(i));
                     }
+                    int selectedHotbarSlot = Math.max(0, Math.min(8, pdata.selectedHotbarSlot));
+                    player.getInventory().selected = selectedHotbarSlot;
+                    player.connection.send(new ClientboundSetCarriedItemPacket(selectedHotbarSlot));
+                    player.containerMenu.broadcastChanges();
                 }
             }
 
