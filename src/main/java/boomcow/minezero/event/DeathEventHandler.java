@@ -51,9 +51,9 @@ public class DeathEventHandler {
 
             String chime = ConfigHandler.getDeathChime();
             if ("CLASSIC".equalsIgnoreCase(chime)) {
-                playClassicChime(player);
+                playClassicChime(level.getServer());
             } else if ("ALTERNATE".equalsIgnoreCase(chime)) {
-                playAlternateChime(player);
+                playAlternateChime(level.getServer());
             }
 
         } catch (Exception e) {
@@ -62,29 +62,33 @@ public class DeathEventHandler {
         }
     }
 
-    private void playClassicChime(ServerPlayer player) {
+    private void playClassicChime(MinecraftServer server) {
 
         Logger logger = LogManager.getLogger();
         logger.debug("Playing classic chime");
         ClientboundStopSoundPacket stopSoundPacket = new ClientboundStopSoundPacket(
                 new ResourceLocation("minezero", "death_chime"),
                 SoundSource.PLAYERS);
-        player.connection.send(stopSoundPacket);
 
-        player.playNotifySound(ModSoundEvents.DEATH_CHIME.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            player.connection.send(stopSoundPacket);
+            player.playNotifySound(ModSoundEvents.DEATH_CHIME.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
+        }
 
     }
 
-    private void playAlternateChime(ServerPlayer player) {
+    private void playAlternateChime(MinecraftServer server) {
 
         Logger logger = LogManager.getLogger();
         logger.debug("Playing alternate chime");
         ClientboundStopSoundPacket stopSoundPacket = new ClientboundStopSoundPacket(
                 new ResourceLocation("minezero", "alt_death_chime"),
                 SoundSource.PLAYERS);
-        player.connection.send(stopSoundPacket);
 
-        player.playNotifySound(ModSoundEvents.ALT_DEATH_CHIME.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            player.connection.send(stopSoundPacket);
+            player.playNotifySound(ModSoundEvents.ALT_DEATH_CHIME.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
+        }
 
     }
 
