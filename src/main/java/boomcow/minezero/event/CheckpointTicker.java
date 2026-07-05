@@ -3,11 +3,10 @@ package boomcow.minezero.event;
 import boomcow.minezero.ModGameRules;
 import boomcow.minezero.checkpoint.CheckpointData;
 import boomcow.minezero.checkpoint.CheckpointManager;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,9 +22,11 @@ public class CheckpointTicker {
 
     private static int intervalTicks = 0;
 
-    @SubscribeEvent
-    public static void onServerTickPost(ServerTickEvent.Post event) {
-        MinecraftServer server = event.getServer();
+    public static void register() {
+        ServerTickEvents.END_SERVER_TICK.register(CheckpointTicker::onServerTickPost);
+    }
+
+    private static void onServerTickPost(MinecraftServer server) {
         ServerLevel level = server.overworld();
         if (level == null) return;
         var autoRule = level.getGameRules().getRule(ModGameRules.AUTO_CHECKPOINT_ENABLED);
@@ -63,7 +64,6 @@ public class CheckpointTicker {
 
         long currentTick = server.getTickCount();
         if (intervalTicks != nextCheckpointInterval) {
-
             nextCheckpointInterval = intervalTicks;
             lastCheckpointTick = currentTick;
             return;
@@ -79,7 +79,6 @@ public class CheckpointTicker {
                 if (!server.getPlayerList().getPlayers().isEmpty()) {
                     ServerPlayer firstPlayer = server.getPlayerList().getPlayers().get(0);
                     data.setAnchorPlayerUUID(firstPlayer.getUUID());
-
                 } else {
                     LOGGER.warn("No players online to set as anchor.");
                     return;
@@ -87,7 +86,6 @@ public class CheckpointTicker {
             }
             ServerPlayer anchorPlayer = server.getPlayerList().getPlayer(data.getAnchorPlayerUUID());
             if (anchorPlayer != null) {
-
                 CheckpointManager.setCheckpoint(anchorPlayer);
                 randomIntervalSelected = false;
             } else {

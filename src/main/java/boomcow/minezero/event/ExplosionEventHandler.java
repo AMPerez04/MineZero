@@ -1,22 +1,19 @@
 package boomcow.minezero.event;
 
-import boomcow.minezero.checkpoint.CheckpointData;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.level.ExplosionEvent;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ExplosionEventHandler {
 
-    @SubscribeEvent
-    public static void onExplosionDetonate(ExplosionEvent.Detonate event) {
-        ServerLevel level = (ServerLevel) event.getLevel();
-        CheckpointData data = CheckpointData.get(level);
-        if (data == null || data.getAnchorPlayerUUID() == null) return;
-        ServerPlayer anchorPlayer = level.getServer().getPlayerList().getPlayer(data.getAnchorPlayerUUID());
-        if (anchorPlayer == null || anchorPlayer.isDeadOrDying()) {
-            event.getAffectedBlocks().clear();
-        }
+    private static final Logger LOGGER = LogManager.getLogger(ExplosionEventHandler.class);
+
+    /**
+     * On Forge/NeoForge this handler clears an explosion's affected block list
+     * while the anchor player is dead so the blast can't desync the diff data.
+     * Fabric API has no explosion events, so this needs a mixin into
+     * Explosion#finalizeExplosion. Not yet ported.
+     */
+    public static void register() {
+        LOGGER.info("Explosion tracking is not yet ported to Fabric (requires a mixin).");
     }
 }

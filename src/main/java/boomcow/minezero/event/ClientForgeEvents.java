@@ -2,37 +2,31 @@ package boomcow.minezero.event;
 
 import boomcow.minezero.input.KeyBindings;
 import boomcow.minezero.network.SelfDamagePacket;
-import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.chat.Component;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientForgeEvents {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientForgeEvents.class);
 
-    @SubscribeEvent
-    public static void onClientTickPostEvent(ClientTickEvent.Post event) {
+    public static void registerClientEvents() {
+        ClientTickEvents.END_CLIENT_TICK.register(mc -> {
+            if (mc.player == null || mc.level == null) {
+                return;
+            }
 
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null) {
-            return;
-        }
-        if (KeyBindings.EXAMPLE_ACTION_KEY != null) {
-            while (KeyBindings.EXAMPLE_ACTION_KEY.get().consumeClick()) {
+            while (KeyBindings.EXAMPLE_ACTION_KEY.consumeClick()) {
                 LOGGER.info("Example Action Key Pressed!");
                 mc.player.sendSystemMessage(Component.translatable("message.minezero.example_keybind"));
             }
-        }
 
-        if (KeyBindings.SELF_DAMAGE_KEY != null) {
-            while (KeyBindings.SELF_DAMAGE_KEY.get().consumeClick()) {
+            while (KeyBindings.SELF_DAMAGE_KEY.consumeClick()) {
                 LOGGER.debug("Self Damage Key Pressed - Sending Packet!");
-                PacketDistributor.sendToServer(new SelfDamagePacket());
+                ClientPlayNetworking.send(new SelfDamagePacket());
             }
-        }
+        });
     }
 }

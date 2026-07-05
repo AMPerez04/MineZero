@@ -35,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.PartEntity;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -150,7 +150,7 @@ public class CheckpointManager {
                         entity instanceof ItemEntity ||
                         entity instanceof LightningBolt ||
                         entity instanceof Marker ||
-                        entity instanceof PartEntity ||
+                        entity instanceof EnderDragonPart ||
                         entity instanceof PrimedTnt ||
                         entity instanceof Projectile ||
                         entity instanceof ArmorStand) {

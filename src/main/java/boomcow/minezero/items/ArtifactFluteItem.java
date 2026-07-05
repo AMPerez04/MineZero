@@ -3,62 +3,61 @@ package boomcow.minezero.items;
 import boomcow.minezero.ModGameRules;
 import boomcow.minezero.ModSoundEvents;
 import boomcow.minezero.checkpoint.CheckpointManager;
-
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class ArtifactFluteItem extends Item {
-    public ArtifactFluteItem(Settings settings) {
-        super(settings);
+    public ArtifactFluteItem(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand) {
-        ItemStack itemStackInHand = player.getStackInHand(hand);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack itemStackInHand = player.getItemInHand(hand);
 
-        if (!world.getGameRules().getBoolean(ModGameRules.ARTIFACT_FLUTE_ENABLED)) {
-            if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayer) {
-                serverPlayer.sendMessage(Text.translatable("message.minezero.flute_disabled"), false);
+        if (!level.getGameRules().getBoolean(ModGameRules.ARTIFACT_FLUTE_ENABLED)) {
+            if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.displayClientMessage(Component.translatable("message.minezero.flute_disabled"), false);
             }
-            return ActionResult.FAIL;
+            return InteractionResultHolder.fail(itemStackInHand);
         }
 
-        if (!world.isClient()) {
-            if (player instanceof ServerPlayerEntity serverPlayer) {
-                boolean cooldownEnabled = world.getGameRules().getBoolean(ModGameRules.ARTIFACT_FLUTE_COOLDOWN_ENABLED);
+        if (!level.isClientSide()) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                boolean cooldownEnabled = level.getGameRules().getBoolean(ModGameRules.ARTIFACT_FLUTE_COOLDOWN_ENABLED);
                 if (cooldownEnabled) {
-                    int cooldownSeconds = world.getGameRules().getInt(ModGameRules.ARTIFACT_FLUTE_COOLDOWN_SECONDS);
+                    int cooldownSeconds = level.getGameRules().getInt(ModGameRules.ARTIFACT_FLUTE_COOLDOWN_SECONDS);
                     int cooldownTicks = cooldownSeconds * 20;
 
-                    if (serverPlayer.getItemCooldownManager().isCoolingDown(this)) {
-                        serverPlayer.sendMessage(Text.translatable("message.minezero.flute_cooldown"), true);
-                        return ActionResult.FAIL;
+                    if (serverPlayer.getCooldowns().isOnCooldown(this)) {
+                        serverPlayer.displayClientMessage(Component.translatable("message.minezero.flute_cooldown"), true);
+                        return InteractionResultHolder.fail(itemStackInHand);
                     } else {
-                        serverPlayer.getItemCooldownManager().set(this, cooldownTicks);
+                        serverPlayer.getCooldowns().addCooldown(this, cooldownTicks);
                     }
                 }
 
                 CheckpointManager.setCheckpoint(serverPlayer);
 
-                world.playSound(
+                level.playSound(
                         null,
                         player.getX(), player.getY(), player.getZ(),
                         ModSoundEvents.FLUTE_CHIME,
-                        SoundCategory.PLAYERS,
+                        SoundSource.PLAYERS,
                         1.0f,
                         1.0f
                 );
 
-                serverPlayer.sendMessage(Text.translatable("message.minezero.flute_checkpoint_set"), true);
+                serverPlayer.displayClientMessage(Component.translatable("message.minezero.flute_checkpoint_set"), true);
             }
         }
-        return ActionResult.SUCCESS;
+        return InteractionResultHolder.success(itemStackInHand);
     }
 }

@@ -1,68 +1,62 @@
 package boomcow.minezero.network;
 
-import boomcow.minezero.MineZeroMain;
-import com.mojang.logging.LogUtils;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.slf4j.Logger;
-
+import org.slf4j.LoggerFactory;
 
 public class PacketHandler {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(PacketHandler.class);
 
-    /**
-     * Registers a listener for the RegisterPayloadHandlersEvent on the mod event bus.
-     * This is typically called from your main mod class's constructor.
-     * @param modEventBus The mod-specific event bus.
-     */
-    public static void register(final IEventBus modEventBus) {
-        modEventBus.addListener(PacketHandler::onRegisterPayloadHandlers);
-        LOGGER.info("Scheduled MineZero payload handler registration.");
+    public static void register() {
+        PayloadTypeRegistry.playC2S().register(SelfDamagePacket.TYPE, SelfDamagePacket.STREAM_CODEC);
+
+        ServerPlayNetworking.registerGlobalReceiver(SelfDamagePacket.TYPE, (payload, context) -> {
+            context.server().execute(() -> handleSelfDamage(context.player()));
+        });
+
+        LOGGER.info("MineZero network payloads registered.");
     }
 
-    /**
-     * Event handler method to register all custom packet payloads.
-     * This method is called by the event bus when NeoForge is ready for payload registration.
-     * @param event The registration event.
-     */
-    private static void onRegisterPayloadHandlers(final RegisterPayloadHandlersEvent event) {
-        LOGGER.info("Registering MineZero network payloads...");
-        final PayloadRegistrar registrar = event.registrar(MineZeroMain.MODID).versioned("1");
-        if (SelfDamagePacket.TYPE != null && SelfDamagePacket.STREAM_CODEC != null) {
-            registrar.playToServer(
-                    SelfDamagePacket.TYPE,
-                    (StreamCodec<? super RegistryFriendlyByteBuf, SelfDamagePacket>) SelfDamagePacket.STREAM_CODEC,
-                    SelfDamagePacket::handle
-            );
-            LOGGER.debug("Registered C2S payload: {}", SelfDamagePacket.ID);
-        } else {
-            LOGGER.error("SelfDamagePacket.TYPE or .STREAM_CODEC is null! Packet will not be registered.");
+    private static void handleSelfDamage(ServerPlayer player) {
+        ItemStack mainHandItem = player.getMainHandItem();
+        float damageAmount = 1.0f;
+
+        if (!mainHandItem.isEmpty()) {
+            ItemAttributeModifiers attributeModifiersComponent = mainHandItem.get(DataComponents.ATTRIBUTE_MODIFIERS);
+
+            if (attributeModifiersComponent != null && attributeModifiersComponent != ItemAttributeModifiers.EMPTY) {
+                double weaponDamageContribution = 0.0;
+                boolean foundAttackDamage = false;
+                for (ItemAttributeModifiers.Entry entry : attributeModifiersComponent.modifiers()) {
+                    if (entry.attribute().is(Attributes.ATTACK_DAMAGE) && entry.slot().test(EquipmentSlot.MAINHAND)) {
+                        foundAttackDamage = true;
+                        AttributeModifier modifier = entry.modifier();
+                        if (modifier.operation() == AttributeModifier.Operation.ADD_VALUE) {
+                            weaponDamageContribution += modifier.amount();
+                        }
+                    }
+                }
+
+                if (foundAttackDamage) {
+                    damageAmount = Math.max(1.0f, (float) weaponDamageContribution + 1.0f);
+                }
+            }
         }
-        /*
-        if (AnotherExamplePacket.TYPE != null && AnotherExamplePacket.STREAM_CODEC != null) {
-            registrar.play(
-                    AnotherExamplePacket.TYPE,
-                    AnotherExamplePacket.STREAM_CODEC,
-                    handler -> handler.server(AnotherExamplePacket::handleServer)
-                                     .client(AnotherExamplePacket::handleClient)
-            );
-            LOGGER.debug("Registered payload: {}", AnotherExamplePacket.ID);
+
+        if (damageAmount > 0) {
+            DamageSource source = player.damageSources().playerAttack(player);
+            player.hurt(source, damageAmount);
+            LOGGER.info("Player {} self-inflicted {} damage.", player.getName().getString(), damageAmount);
         }
-        */
-
-        LOGGER.info("Finished registering network payloads for MineZero.");
     }
-
-    /*
-    public static void sendToServer(CustomPacketPayload payload) {
-        PacketDistributor.sendToServer(payload);
-    }
-    public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
-        PacketDistributor.sendToPlayer(player, payload);
-    }
-    */
 }

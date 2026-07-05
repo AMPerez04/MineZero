@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
+  "id": "minezero",
   "version": "${version}",
 
-  "name": "${mod_name}",
-  "description": "${mod_description}",
+  "name": "MineZero",
+  "description": "A mod inspired by Re:Zero. When you die, you return to a checkpoint and restore your previous state.",
   "authors": [
-    "${mod_authors}"
+    "LethallyGood"
   ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/mine-zero-return-by-death",
     "sources": "https://www.curseforge.com/minecraft/mc-mods/mine-zero-return-by-death"
   },
-  "license": "${mod_license}",
-  "icon": "assets/${mod_id}/icon.png",
+  "license": "All Rights Reserved",
+  "icon": "assets/minezero/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "${mod_group_id}.${mod_name}Main"
+      "boomcow.minezero.MineZeroMain"
     ],
     "client": [
-      "${mod_group_id}.${mod_name}Client"
+      "boomcow.minezero.MineZeroClient"
     ],
     "modmenu": [
       "boomcow.minezero.config.ModMenuIntegration"
@@ -29,13 +29,12 @@
 
   "depends": {
     "fabricloader": ">=0.16.10",
-    "minecraft": "~${minecraft_version}",
+    "minecraft": "~1.21.1",
     "java": ">=21",
-    "fabric-api": ">=${fabric_version}",
-    "fabric-key-binding-api-v1": "*"
-
+    "fabric-api": "*",
+    "cloth-config": "*"
   },
   "suggests": {
-
+    "modmenu": "*"
   }
 }
