@@ -32,9 +32,9 @@ public class ArtifactFluteItem extends Item {
 
         if (!world.isClient()) {
             if (player instanceof ServerPlayerEntity serverPlayer) {
-                boolean cooldownEnabled = world.getGameRules().getBoolean(ModGameRules.FLUTE_COOLDOWN_ENABLED);
+                boolean cooldownEnabled = world.getGameRules().getBoolean(ModGameRules.ARTIFACT_FLUTE_COOLDOWN_ENABLED);
                 if (cooldownEnabled) {
-                    int cooldownSeconds = world.getGameRules().getInt(ModGamerules.FLUTE_COOLDOWN_DURATION);
+                    int cooldownSeconds = world.getGameRules().getInt(ModGameRules.ARTIFACT_FLUTE_COOLDOWN_SECONDS);
                     int cooldownTicks = cooldownSeconds * 20;
 
                     if (serverPlayer.getItemCooldownManager().isCoolingDown(this)) {

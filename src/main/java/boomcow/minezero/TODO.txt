@@ -17,7 +17,7 @@ X Track block entities again
 - double check enemy aggro
 - world particles + sounds should be canceled on death
 - save + falling shouldnt allow you to live
-X save spawn locations for non subaru people
+X save spawn locations for non-anchor players
 - armor stands, items, frames, dissapear
 - doors trapdoors not tracked
 X xp glitch

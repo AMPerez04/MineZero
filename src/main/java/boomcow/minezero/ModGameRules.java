@@ -8,6 +8,17 @@ import net.minecraft.world.GameRules.Category;
 import net.minecraft.world.GameRules.IntRule;
 import net.minecraft.world.GameRules.Key;
 
+/**
+ * MineZero gamerules.
+ *
+ * Naming convention (see docs/HowItWorks.md):
+ * - Keys are camelCase, matching vanilla gamerule style (e.g. doMobSpawning),
+ *   namespaced on Fabric (use them as /gamerule minezero:<key>).
+ * - Feature toggles end in "Enabled"; event-driven checkpoint triggers read
+ *   "checkpointOn<Event>"; other booleans read as plain-English predicates.
+ * - Integer rules end with their unit (e.g. "Seconds").
+ * - Java constants are the SCREAMING_SNAKE form of the registered key.
+ */
 public class ModGameRules {
     public static final Key<BooleanRule> AUTO_CHECKPOINT_ENABLED =
             GameRuleRegistry.register(
@@ -16,43 +27,43 @@ public class ModGameRules {
                     GameRuleFactory.createBooleanRule(true)
             );
 
-    public static final Key<IntRule> CHECKPOINT_FIXED_INTERVAL =
+    public static final Key<IntRule> AUTO_CHECKPOINT_INTERVAL_SECONDS =
             GameRuleRegistry.register(
-                    Identifier.of(MineZeroMain.MOD_ID, "checkpointFixedInterval").toString(),
+                    Identifier.of(MineZeroMain.MOD_ID, "autoCheckpointIntervalSeconds").toString(),
                     Category.PLAYER,
                     GameRuleFactory.createIntRule(600, 0)
             );
 
-    public static final Key<BooleanRule> USE_RANDOM_INTERVAL =
+    public static final Key<BooleanRule> AUTO_CHECKPOINT_RANDOM_INTERVAL_ENABLED =
             GameRuleRegistry.register(
-                    Identifier.of(MineZeroMain.MOD_ID, "useRandomCheckpointInterval").toString(),
+                    Identifier.of(MineZeroMain.MOD_ID, "autoCheckpointRandomIntervalEnabled").toString(),
                     Category.PLAYER,
                     GameRuleFactory.createBooleanRule(false)
             );
 
-    public static final Key<IntRule> RANDOM_CHECKPOINT_LOWER_BOUND =
+    public static final Key<IntRule> AUTO_CHECKPOINT_RANDOM_MIN_SECONDS =
             GameRuleRegistry.register(
-                    Identifier.of(MineZeroMain.MOD_ID, "randomCheckpointLowerBound").toString(),
+                    Identifier.of(MineZeroMain.MOD_ID, "autoCheckpointRandomMinSeconds").toString(),
                     Category.PLAYER,
                     GameRuleFactory.createIntRule(600, 0)
             );
 
-    public static final Key<IntRule> RANDOM_CHECKPOINT_UPPER_BOUND =
+    public static final Key<IntRule> AUTO_CHECKPOINT_RANDOM_MAX_SECONDS =
             GameRuleRegistry.register(
-                    Identifier.of(MineZeroMain.MOD_ID, "randomCheckpointUpperBound").toString(),
+                    Identifier.of(MineZeroMain.MOD_ID, "autoCheckpointRandomMaxSeconds").toString(),
                     Category.PLAYER,
                     GameRuleFactory.createIntRule(1200, 1)
             );
-    public static final Key<BooleanRule> FLUTE_COOLDOWN_ENABLED =
+    public static final Key<BooleanRule> ARTIFACT_FLUTE_COOLDOWN_ENABLED =
             GameRuleRegistry.register(
-                    Identifier.of(MineZeroMain.MOD_ID, "fluteCooldownEnabled").toString(),
+                    Identifier.of(MineZeroMain.MOD_ID, "artifactFluteCooldownEnabled").toString(),
                     Category.PLAYER,
                     GameRuleFactory.createBooleanRule(true)
             );
 
-    public static final Key<IntRule> FLUTE_COOLDOWN_DURATION =
+    public static final Key<IntRule> ARTIFACT_FLUTE_COOLDOWN_SECONDS =
             GameRuleRegistry.register(
-                    Identifier.of(MineZeroMain.MOD_ID, "fluteCooldownDuration").toString(),
+                    Identifier.of(MineZeroMain.MOD_ID, "artifactFluteCooldownSeconds").toString(),
                     Category.PLAYER,
                     GameRuleFactory.createIntRule(60, 0)
             );

@@ -11,6 +11,7 @@ import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,10 @@ import java.util.List;
 public class ConfigHandler implements ConfigData {
     private static final Logger LOGGER = LoggerFactory.getLogger(MineZeroMain.MOD_ID + "-config");
 
+    // Sound played when the anchor player dies and the checkpoint is restored.
+    // Valid values match the mod's sound IDs: "death_chime", "alt_death_chime".
     @ConfigEntry.Gui.Tooltip
-    public String deathChime = "CLASSIC";
+    public String restoreSound = "death_chime";
     private static ConfigHandler INSTANCE = null;
 
     public static void register() {
@@ -32,7 +35,7 @@ public class ConfigHandler implements ConfigData {
         AutoConfig.getConfigHolder(ConfigHandler.class).registerSaveListener((manager, data) -> {
             LOGGER.info("MineZero config saved!");
             INSTANCE = data;
-            return me.shedaniel.clothconfig2.api. திரும்பு.SUCCESS;
+            return ActionResult.SUCCESS;
         });
     }
     public static ConfigHandler get() {
@@ -42,8 +45,8 @@ public class ConfigHandler implements ConfigData {
         }
         return INSTANCE;
     }
-    public static String getDeathChimeOption() {
-        return get().deathChime;
+    public static String getRestoreSound() {
+        return get().restoreSound;
     }
     public static Screen getClothConfigScreen(Screen parentScreen) {
         ConfigBuilder builder = ConfigBuilder.create()
@@ -53,22 +56,22 @@ public class ConfigHandler implements ConfigData {
             AutoConfig.getConfigHolder(ConfigHandler.class).save();
         });
 
-        ConfigCategory general = builder.getOrCreateCategory(Text.translatable("config." + MineZeroMain.MOD_ID + ".category.general"));
+        ConfigCategory sounds = builder.getOrCreateCategory(Text.translatable("config." + MineZeroMain.MOD_ID + ".category.sounds"));
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-        List<String> deathChimeOptions = Arrays.asList("CLASSIC", "ALTERNATE");
-        general.addEntry(entryBuilder.startSelector(
-                                Text.translatable("config." + MineZeroMain.MOD_ID + ".option.deathChime"),
-                                deathChimeOptions.toArray(new String[0]),
-                                get().deathChime
+        List<String> restoreSoundOptions = Arrays.asList("death_chime", "alt_death_chime");
+        sounds.addEntry(entryBuilder.startSelector(
+                                Text.translatable("config." + MineZeroMain.MOD_ID + ".option.restoreSound"),
+                                restoreSoundOptions.toArray(new String[0]),
+                                get().restoreSound
                         )
-                        .setDefaultValue("CLASSIC")
-                        .setTooltip(Text.translatable("config." + MineZeroMain.MOD_ID + ".option.deathChime.tooltip"))
-                        .setSaveConsumer(newValue -> get().deathChime = newValue)
+                        .setDefaultValue("death_chime")
+                        .setTooltip(Text.translatable("config." + MineZeroMain.MOD_ID + ".option.restoreSound.tooltip"))
+                        .setSaveConsumer(newValue -> get().restoreSound = newValue)
                         .build()
         );
         /*
-        general.addEntry(entryBuilder.startBooleanToggle(
+        sounds.addEntry(entryBuilder.startBooleanToggle(
                                 Text.translatable("config." + MineZeroMain.MOD_ID + ".option.exampleBoolean"),
                                 get().exampleBoolean
                         )
@@ -84,10 +87,11 @@ public class ConfigHandler implements ConfigData {
     @Override
     public void validatePostLoad() throws ConfigData.ValidationException {
         ConfigData.super.validatePostLoad();
-        List<String> validChimes = Arrays.asList("CLASSIC", "ALTERNATE");
-        if (!validChimes.contains(deathChime)) {
-            LOGGER.warn("Invalid deathChime value '{}' found in config, resetting to default 'CLASSIC'.", deathChime);
-            deathChime = "CLASSIC";
+        // "CLASSIC"/"ALTERNATE" accepted as legacy values from pre-rename configs.
+        List<String> validSounds = Arrays.asList("death_chime", "alt_death_chime", "CLASSIC", "ALTERNATE");
+        if (!validSounds.contains(restoreSound)) {
+            LOGGER.warn("Invalid restoreSound value '{}' found in config, resetting to default 'death_chime'.", restoreSound);
+            restoreSound = "death_chime";
         }
     }
 }

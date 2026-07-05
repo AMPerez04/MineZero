@@ -1,8 +1,8 @@
 package boomcow.minezero;
 
-import boomcow.minezero.command.SetCheckPointCommand;
-import boomcow.minezero.command.SetSubaruPlayer;
-import boomcow.minezero.command.TriggerRBD;
+import boomcow.minezero.command.SetCheckpointCommand;
+import boomcow.minezero.command.SetAnchorCommand;
+import boomcow.minezero.command.RestoreCheckpointCommand;
 import boomcow.minezero.ConfigHandler;
 import boomcow.minezero.event.*;
 import boomcow.minezero.items.ArtifactFluteItem;
@@ -48,9 +48,9 @@ public class MineZeroMain implements ModInitializer {
         registerServerTickEvents();
         BlockChangeListener.register();
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            SetCheckPointCommand.register(dispatcher, registryAccess);
-            SetSubaruPlayer.register(dispatcher, registryAccess);
-            TriggerRBD.register(dispatcher, registryAccess);
+            SetCheckpointCommand.register(dispatcher);
+            SetAnchorCommand.register(dispatcher);
+            RestoreCheckpointCommand.register(dispatcher);
         });
 
         registerServerEventHandlers();
