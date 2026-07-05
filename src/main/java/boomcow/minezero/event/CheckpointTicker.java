@@ -52,11 +52,11 @@ public class CheckpointTicker {
             return;
         }
 
-        boolean useRandom = rules.getBoolean(ModGameRules.USE_RANDOM_INTERVAL);
+        boolean useRandom = rules.getBoolean(ModGameRules.AUTO_CHECKPOINT_RANDOM_INTERVAL_ENABLED);
 
         if (useRandom && !randomIntervalSelected) {
-            int lowerSeconds = rules.getInt(ModGameRules.RANDOM_CHECKPOINT_LOWER_BOUND);
-            int upperSeconds = rules.getInt(ModGameRules.RANDOM_CHECKPOINT_UPPER_BOUND);
+            int lowerSeconds = rules.getInt(ModGameRules.AUTO_CHECKPOINT_RANDOM_MIN_SECONDS);
+            int upperSeconds = rules.getInt(ModGameRules.AUTO_CHECKPOINT_RANDOM_MAX_SECONDS);
 
             // Safety defaults if rules return 0 (uninitialized)
             if (lowerSeconds == 0) lowerSeconds = 600;
@@ -74,7 +74,7 @@ public class CheckpointTicker {
             }
             LOGGER.debug("Using random interval: {} ticks (lower bound: {} ticks, upper bound: {} ticks)", intervalTicks, lowerTicks, upperTicks);
         } else if (!useRandom) {
-            int fixedSeconds = rules.getInt(ModGameRules.CHECKPOINT_FIXED_INTERVAL);
+            int fixedSeconds = rules.getInt(ModGameRules.AUTO_CHECKPOINT_INTERVAL_SECONDS);
             if (fixedSeconds == 0) fixedSeconds = 600; // Safety default
             intervalTicks = fixedSeconds * 20;
         }

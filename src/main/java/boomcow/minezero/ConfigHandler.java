@@ -10,27 +10,25 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod.EventBusSubscriber(modid = MineZero.MODID)
 public class ConfigHandler {
 
-    @Config.Comment("General settings")
-    public static General general = new General();
+    @Config.Comment("Sound settings")
+    public static Sounds sounds = new Sounds();
 
-    @Config.Comment("Checkpoint settings")
-    public static Checkpoints checkpoints = new Checkpoints();
-
-    public static class General {
-        @Config.Comment("Death Chime Options: CLASSIC, ALTERNATE")
-        @Config.Name("deathChime")
-        public String deathChime = "CLASSIC";
-    }
-
-    public static class Checkpoints {
-        // Add checkpoint specific config fields here in the future
+    public static class Sounds {
+        @Config.Comment({
+                "Sound played when the anchor player dies and the checkpoint is restored.",
+                "Valid values (matching the mod's sound IDs):",
+                "  \"death_chime\"     - the classic restore chime",
+                "  \"alt_death_chime\" - the alternate restore chime"
+        })
+        @Config.Name("restoreSound")
+        public String restoreSound = "death_chime";
     }
 
     /**
      * Helper method to maintain API compatibility with the rest of the port.
      */
-    public static String getDeathChime() {
-        return general.deathChime;
+    public static String getRestoreSound() {
+        return sounds.restoreSound;
     }
 
     /**

@@ -48,10 +48,10 @@ public class DeathEventHandler {
             });
 
             // Play Chime
-            String chime = ConfigHandler.getDeathChime();
-            if ("CLASSIC".equalsIgnoreCase(chime)) {
+            String restoreSound = ConfigHandler.getRestoreSound();
+            if ("death_chime".equalsIgnoreCase(restoreSound) || "CLASSIC".equalsIgnoreCase(restoreSound)) {
                 playClassicChime(player);
-            } else if ("ALTERNATE".equalsIgnoreCase(chime)) {
+            } else if ("alt_death_chime".equalsIgnoreCase(restoreSound) || "ALTERNATE".equalsIgnoreCase(restoreSound)) {
                 playAlternateChime(player);
             }
 

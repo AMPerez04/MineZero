@@ -9,7 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
-public class SetCheckPointCommand extends CommandBase {
+public class SetCheckpointCommand extends CommandBase {
 
     @Override
     public String getName() {

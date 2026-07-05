@@ -1,32 +1,32 @@
 {
   "item.minezero.artifact_flute": "Artifact Flute",
 
-  "gamerule.autoCheckpointEnabled": "Auto Checkpoints",
+  "gamerule.autoCheckpointEnabled": "Automatic Checkpoints",
   "gamerule.autoCheckpointEnabled.description": "Enable or disable automatic checkpoint creation.",
 
-  "gamerule.checkpointFixedInterval": "Fixed Checkpoint Interval",
-  "gamerule.checkpointFixedInterval.description": "Number of seconds between each checkpoint.",
+  "gamerule.autoCheckpointIntervalSeconds": "Auto Checkpoint Interval (seconds)",
+  "gamerule.autoCheckpointIntervalSeconds.description": "Number of seconds between automatic checkpoints when the random interval is disabled.",
 
-  "gamerule.useRandomCheckpointInterval": "Use Random Interval",
-  "gamerule.useRandomCheckpointInterval.description": "Randomly choose an interval between [Lower Bound] and [Upper Bound] seconds for checkpoints.",
+  "gamerule.autoCheckpointRandomIntervalEnabled": "Use Random Checkpoint Interval",
+  "gamerule.autoCheckpointRandomIntervalEnabled.description": "Randomly choose an interval between the minimum and maximum bounds for automatic checkpoints instead of the fixed interval.",
 
-  "gamerule.randomCheckpointLowerBound": "Random Checkpoint Lower Bound",
-  "gamerule.randomCheckpointLowerBound.description": "The lower bound (in seconds) for the random checkpoint interval.",
+  "gamerule.autoCheckpointRandomMinSeconds": "Random Interval Minimum (seconds)",
+  "gamerule.autoCheckpointRandomMinSeconds.description": "The minimum number of seconds for the random checkpoint interval.",
 
-  "gamerule.randomCheckpointUpperBound": "Random Checkpoint Upper Bound",
-  "gamerule.randomCheckpointUpperBound.description": "The upper bound (in seconds) for the random checkpoint interval.",
+  "gamerule.autoCheckpointRandomMaxSeconds": "Random Interval Maximum (seconds)",
+  "gamerule.autoCheckpointRandomMaxSeconds.description": "The maximum number of seconds for the random checkpoint interval.",
 
-  "gamerule.fluteCooldownEnabled": "Flute Cooldown Enabled",
-  "gamerule.fluteCooldownEnabled.description": "Enable or disable the cooldown for using the Artifact Flute.",
+  "gamerule.artifactFluteCooldownEnabled": "Artifact Flute Cooldown",
+  "gamerule.artifactFluteCooldownEnabled.description": "Enable or disable the cooldown for using the Artifact Flute.",
 
-  "gamerule.fluteCooldownDuration": "Flute Cooldown Duration",
-  "gamerule.fluteCooldownDuration.description": "Duration in seconds for the Artifact Flute cooldown.",
+  "gamerule.artifactFluteCooldownSeconds": "Artifact Flute Cooldown (seconds)",
+  "gamerule.artifactFluteCooldownSeconds.description": "Duration in seconds of the Artifact Flute cooldown.",
 
   "gamerule.artifactFluteEnabled": "Artifact Flute Enabled",
   "gamerule.artifactFluteEnabled.description": "Enable or disable the Artifact Flute feature.",
 
-  "gamerule.setCheckpointOnWorldCreation":" Set Checkpoint on World Creation",
-  "gamerule.setCheckpointOnWorldCreation.description": "Automatically set a checkpoint when a new world is created.",
+  "gamerule.checkpointOnWorldCreation": "Checkpoint on World Creation",
+  "gamerule.checkpointOnWorldCreation.description": "Automatically set a checkpoint when a new world is created.",
 
   "_comment": "Keybinds",
   "key.categories.minezero": "MineZero Keybinds",

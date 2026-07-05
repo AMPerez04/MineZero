@@ -1,8 +1,0 @@
-# General settings for MineZero
-[general]
-# Death Chime Options: CLASSIC, ALTERNATE
-deathChime = "CLASSIC"
-
-# Checkpoint system settings
-[checkpoints]
-

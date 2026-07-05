@@ -2,18 +2,28 @@ package boomcow.minezero;
 
 import net.minecraft.world.GameRules;
 
+/**
+ * MineZero gamerules.
+ *
+ * Naming convention (see docs/HowItWorks.md):
+ * - Keys are camelCase, matching vanilla gamerule style (e.g. doMobSpawning).
+ * - Feature toggles end in "Enabled"; event-driven checkpoint triggers read
+ *   "checkpointOn<Event>"; other booleans read as plain-English predicates.
+ * - Integer rules end with their unit (e.g. "Seconds").
+ * - Java constants are the SCREAMING_SNAKE form of the registered key.
+ */
 public class ModGameRules {
 
     // Rule Names (Keys)
     public static final String AUTO_CHECKPOINT_ENABLED = "autoCheckpointEnabled";
-    public static final String CHECKPOINT_FIXED_INTERVAL = "checkpointFixedInterval";
-    public static final String USE_RANDOM_INTERVAL = "useRandomCheckpointInterval";
-    public static final String RANDOM_CHECKPOINT_LOWER_BOUND = "randomCheckpointLowerBound";
-    public static final String RANDOM_CHECKPOINT_UPPER_BOUND = "randomCheckpointUpperBound";
-    public static final String FLUTE_COOLDOWN_ENABLED = "fluteCooldownEnabled";
-    public static final String FLUTE_COOLDOWN_DURATION = "fluteCooldownDuration";
+    public static final String AUTO_CHECKPOINT_INTERVAL_SECONDS = "autoCheckpointIntervalSeconds";
+    public static final String AUTO_CHECKPOINT_RANDOM_INTERVAL_ENABLED = "autoCheckpointRandomIntervalEnabled";
+    public static final String AUTO_CHECKPOINT_RANDOM_MIN_SECONDS = "autoCheckpointRandomMinSeconds";
+    public static final String AUTO_CHECKPOINT_RANDOM_MAX_SECONDS = "autoCheckpointRandomMaxSeconds";
+    public static final String ARTIFACT_FLUTE_COOLDOWN_ENABLED = "artifactFluteCooldownEnabled";
+    public static final String ARTIFACT_FLUTE_COOLDOWN_SECONDS = "artifactFluteCooldownSeconds";
     public static final String ARTIFACT_FLUTE_ENABLED = "artifactFluteEnabled";
-    public static final String SET_CHECKPOINT_ON_WORLD_CREATION = "setCheckpointOnWorldCreation";
+    public static final String CHECKPOINT_ON_WORLD_CREATION = "checkpointOnWorldCreation";
 
     /**
      * Registers the custom GameRules with the server.
@@ -23,14 +33,14 @@ public class ModGameRules {
      */
     public static void register(GameRules rules) {
         addRule(rules, AUTO_CHECKPOINT_ENABLED, "true", GameRules.ValueType.BOOLEAN_VALUE);
-        addRule(rules, CHECKPOINT_FIXED_INTERVAL, "600", GameRules.ValueType.NUMERICAL_VALUE);
-        addRule(rules, USE_RANDOM_INTERVAL, "false", GameRules.ValueType.BOOLEAN_VALUE);
-        addRule(rules, RANDOM_CHECKPOINT_LOWER_BOUND, "600", GameRules.ValueType.NUMERICAL_VALUE);
-        addRule(rules, RANDOM_CHECKPOINT_UPPER_BOUND, "1200", GameRules.ValueType.NUMERICAL_VALUE);
-        addRule(rules, FLUTE_COOLDOWN_ENABLED, "true", GameRules.ValueType.BOOLEAN_VALUE);
-        addRule(rules, FLUTE_COOLDOWN_DURATION, "60", GameRules.ValueType.NUMERICAL_VALUE);
+        addRule(rules, AUTO_CHECKPOINT_INTERVAL_SECONDS, "600", GameRules.ValueType.NUMERICAL_VALUE);
+        addRule(rules, AUTO_CHECKPOINT_RANDOM_INTERVAL_ENABLED, "false", GameRules.ValueType.BOOLEAN_VALUE);
+        addRule(rules, AUTO_CHECKPOINT_RANDOM_MIN_SECONDS, "600", GameRules.ValueType.NUMERICAL_VALUE);
+        addRule(rules, AUTO_CHECKPOINT_RANDOM_MAX_SECONDS, "1200", GameRules.ValueType.NUMERICAL_VALUE);
+        addRule(rules, ARTIFACT_FLUTE_COOLDOWN_ENABLED, "true", GameRules.ValueType.BOOLEAN_VALUE);
+        addRule(rules, ARTIFACT_FLUTE_COOLDOWN_SECONDS, "60", GameRules.ValueType.NUMERICAL_VALUE);
         addRule(rules, ARTIFACT_FLUTE_ENABLED, "true", GameRules.ValueType.BOOLEAN_VALUE);
-        addRule(rules, SET_CHECKPOINT_ON_WORLD_CREATION, "true", GameRules.ValueType.BOOLEAN_VALUE);
+        addRule(rules, CHECKPOINT_ON_WORLD_CREATION, "true", GameRules.ValueType.BOOLEAN_VALUE);
     }
 
     /**

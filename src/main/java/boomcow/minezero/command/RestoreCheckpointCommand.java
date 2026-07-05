@@ -13,19 +13,27 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
-public class TriggerRBD extends CommandBase {
+public class RestoreCheckpointCommand extends CommandBase {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public String getName() {
-        return "triggerRBD";
+        return "restorecheckpoint";
+    }
+
+    @Override
+    public List<String> getAliases() {
+        // Deprecated alias, kept for one release cycle. See CHANGELOG.
+        return Collections.singletonList("triggerRBD");
     }
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/triggerRBD";
+        return "/restorecheckpoint";
     }
 
     @Override
@@ -42,29 +50,29 @@ public class TriggerRBD extends CommandBase {
         UUID anchorPlayerUUID = data.getAnchorPlayerUUID();
 
         if (anchorPlayerUUID == null) {
-            sender.sendMessage(new TextComponentString(TextFormatting.RED + "No anchor player (Subaru player) is set. Cannot trigger Return By Death."));
-            LOGGER.warn("Attempted to trigger RBD, but no anchor player is set.");
+            sender.sendMessage(new TextComponentString(TextFormatting.RED + "No anchor player is set. Cannot restore the checkpoint."));
+            LOGGER.warn("Attempted to restore checkpoint, but no anchor player is set.");
             return;
         }
 
         EntityPlayerMP anchorPlayer = server.getPlayerList().getPlayerByUUID(anchorPlayerUUID);
         if (anchorPlayer == null) {
-            sender.sendMessage(new TextComponentString(TextFormatting.RED + "The anchor player (UUID: " + anchorPlayerUUID.toString() + ") is not currently online. Cannot trigger Return By Death with current implementation."));
-            LOGGER.warn("Attempted to trigger RBD for anchor {}, but player is not online.", anchorPlayerUUID);
+            sender.sendMessage(new TextComponentString(TextFormatting.RED + "The anchor player (UUID: " + anchorPlayerUUID.toString() + ") is not currently online. Cannot restore the checkpoint with current implementation."));
+            LOGGER.warn("Attempted to restore checkpoint for anchor {}, but player is not online.", anchorPlayerUUID);
             return;
         }
 
-        notifyCommandListener(sender, this, "Manually triggering Return By Death for anchor player: " + anchorPlayer.getName() + ". World will reset to checkpoint.");
-        LOGGER.info("Manually triggering Return By Death for anchor player: {} (UUID: {}) by command sender: {}", anchorPlayer.getName(), anchorPlayerUUID, sender.getName());
+        notifyCommandListener(sender, this, "Manually restoring checkpoint for anchor player: " + anchorPlayer.getName() + ". World will reset to checkpoint.");
+        LOGGER.info("Manually restoring checkpoint for anchor player: {} (UUID: {}) by command sender: {}", anchorPlayer.getName(), anchorPlayerUUID, sender.getName());
 
         // Execute on main server thread
         server.addScheduledTask(() -> {
             CheckpointManager.restoreCheckpoint(anchorPlayer);
 
             // Broadcast message to all online players
-            server.getPlayerList().sendMessage(new TextComponentString(TextFormatting.GOLD + "Return By Death has been manually triggered! Resetting to the last checkpoint."));
+            server.getPlayerList().sendMessage(new TextComponentString(TextFormatting.GOLD + "The checkpoint restore has been manually triggered! Resetting to the last checkpoint."));
 
-            LOGGER.info("Return By Death manually triggered and checkpoint restored.");
+            LOGGER.info("Checkpoint restore manually triggered and checkpoint restored.");
         });
     }
 }

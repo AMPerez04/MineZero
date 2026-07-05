@@ -9,16 +9,25 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 
-public class SetSubaruPlayer extends CommandBase {
+import java.util.Collections;
+import java.util.List;
+
+public class SetAnchorCommand extends CommandBase {
 
     @Override
     public String getName() {
-        return "setSubaruPlayer";
+        return "setanchor";
+    }
+
+    @Override
+    public List<String> getAliases() {
+        // Deprecated alias, kept for one release cycle. See CHANGELOG.
+        return Collections.singletonList("setSubaruPlayer");
     }
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/setSubaruPlayer <player>";
+        return "/setanchor <player>";
     }
 
     @Override
