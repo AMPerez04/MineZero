@@ -48,6 +48,6 @@ public class SetAnchorCommand extends CommandBase {
         CheckpointData data = CheckpointData.get(level);
         data.setAnchorPlayerUUID(target.getUniqueID());
 
-        notifyCommandListener(sender, this, "Anchor player set to " + target.getName());
+        notifyCommandListener(sender, this, "command.minezero.anchor_set", target.getName());
     }
 }

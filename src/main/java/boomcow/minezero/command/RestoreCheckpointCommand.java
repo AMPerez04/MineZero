@@ -7,7 +7,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
@@ -50,19 +50,23 @@ public class RestoreCheckpointCommand extends CommandBase {
         UUID anchorPlayerUUID = data.getAnchorPlayerUUID();
 
         if (anchorPlayerUUID == null) {
-            sender.sendMessage(new TextComponentString(TextFormatting.RED + "No anchor player is set. Cannot restore the checkpoint."));
+            TextComponentTranslation noAnchorMsg = new TextComponentTranslation("command.minezero.restore_no_anchor");
+            noAnchorMsg.getStyle().setColor(TextFormatting.RED);
+            sender.sendMessage(noAnchorMsg);
             LOGGER.warn("Attempted to restore checkpoint, but no anchor player is set.");
             return;
         }
 
         EntityPlayerMP anchorPlayer = server.getPlayerList().getPlayerByUUID(anchorPlayerUUID);
         if (anchorPlayer == null) {
-            sender.sendMessage(new TextComponentString(TextFormatting.RED + "The anchor player (UUID: " + anchorPlayerUUID.toString() + ") is not currently online. Cannot restore the checkpoint with current implementation."));
+            TextComponentTranslation offlineMsg = new TextComponentTranslation("command.minezero.restore_anchor_offline", anchorPlayerUUID.toString());
+            offlineMsg.getStyle().setColor(TextFormatting.RED);
+            sender.sendMessage(offlineMsg);
             LOGGER.warn("Attempted to restore checkpoint for anchor {}, but player is not online.", anchorPlayerUUID);
             return;
         }
 
-        notifyCommandListener(sender, this, "Manually restoring checkpoint for anchor player: " + anchorPlayer.getName() + ". World will reset to checkpoint.");
+        notifyCommandListener(sender, this, "command.minezero.restore_starting", anchorPlayer.getName());
         LOGGER.info("Manually restoring checkpoint for anchor player: {} (UUID: {}) by command sender: {}", anchorPlayer.getName(), anchorPlayerUUID, sender.getName());
 
         // Execute on main server thread
@@ -70,7 +74,9 @@ public class RestoreCheckpointCommand extends CommandBase {
             CheckpointManager.restoreCheckpoint(anchorPlayer);
 
             // Broadcast message to all online players
-            server.getPlayerList().sendMessage(new TextComponentString(TextFormatting.GOLD + "The checkpoint restore has been manually triggered! Resetting to the last checkpoint."));
+            TextComponentTranslation broadcastMsg = new TextComponentTranslation("message.minezero.restore_broadcast");
+            broadcastMsg.getStyle().setColor(TextFormatting.GOLD);
+            server.getPlayerList().sendMessage(broadcastMsg);
 
             LOGGER.info("Checkpoint restore manually triggered and checkpoint restored.");
         });

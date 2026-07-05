@@ -6,7 +6,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 
 public class SetCheckpointCommand extends CommandBase {
@@ -34,12 +34,14 @@ public class SetCheckpointCommand extends CommandBase {
             // No arguments: Set checkpoint for the command sender (must be a player)
             targetPlayer = getCommandSenderAsPlayer(sender);
             CheckpointManager.setCheckpoint(targetPlayer);
-            sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Checkpoint set for yourself!"));
+            TextComponentTranslation msg = new TextComponentTranslation("command.minezero.checkpoint_set_self");
+            msg.getStyle().setColor(TextFormatting.GREEN);
+            sender.sendMessage(msg);
         } else {
             // Argument provided: Resolve target player (handles names and selectors like @p)
             targetPlayer = getPlayer(server, sender, args[0]);
             CheckpointManager.setCheckpoint(targetPlayer);
-            notifyCommandListener(sender, this, "Checkpoint set for " + targetPlayer.getName());
+            notifyCommandListener(sender, this, "command.minezero.checkpoint_set_other", targetPlayer.getName());
         }
     }
 }

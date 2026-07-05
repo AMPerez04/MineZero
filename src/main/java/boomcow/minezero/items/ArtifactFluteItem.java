@@ -11,7 +11,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -32,7 +32,7 @@ public class ArtifactFluteItem extends Item {
         if (!world.getGameRules().getBoolean(ModGameRules.ARTIFACT_FLUTE_ENABLED)) {
             if (!world.isRemote && player instanceof EntityPlayerMP) {
                 // False = Chat Message
-                player.sendMessage(new TextComponentString("The Artifact Flute is currently disabled by a game rule."));
+                player.sendMessage(new TextComponentTranslation("message.minezero.flute_disabled"));
             }
             return new ActionResult<>(EnumActionResult.FAIL, stack);
         }
@@ -50,7 +50,9 @@ public class ArtifactFluteItem extends Item {
 
                     if (serverPlayer.getCooldownTracker().hasCooldown(this)) {
                         // True = Action Bar Message
-                        serverPlayer.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Artifact Flute is on cooldown!"), true);
+                        TextComponentTranslation cooldownMsg = new TextComponentTranslation("message.minezero.flute_cooldown");
+                        cooldownMsg.getStyle().setColor(TextFormatting.RED);
+                        serverPlayer.sendStatusMessage(cooldownMsg, true);
                         return new ActionResult<>(EnumActionResult.FAIL, stack);
                     } else {
                         serverPlayer.getCooldownTracker().setCooldown(this, cooldownTicks);
@@ -70,7 +72,9 @@ public class ArtifactFluteItem extends Item {
                 );
 
                 // Success Message (Action Bar)
-                serverPlayer.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Checkpoint set using the Artifact Flute!"), true);
+                TextComponentTranslation successMsg = new TextComponentTranslation("message.minezero.flute_checkpoint_set");
+                successMsg.getStyle().setColor(TextFormatting.GREEN);
+                serverPlayer.sendStatusMessage(successMsg, true);
             }
         }
 

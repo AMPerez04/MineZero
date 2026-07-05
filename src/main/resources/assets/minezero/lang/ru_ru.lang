@@ -1,0 +1,18 @@
+item.minezero.artifact_flute.name=Флейта-артефакт
+
+key.categories.minezero=Управление MineZero
+key.minezero.example_action=Пример действия
+key.minezero.self_damage=Ранить себя оружием
+
+command.minezero.player_only=Эту команду может выполнить только игрок.
+command.minezero.checkpoint_set_self=Контрольная точка установлена для вас!
+command.minezero.checkpoint_set_other=Контрольная точка установлена для %s!
+command.minezero.anchor_set=Игроком-якорем назначен %s
+command.minezero.restore_no_anchor=Игрок-якорь не назначен. Невозможно восстановить контрольную точку.
+command.minezero.restore_anchor_offline=Игрок-якорь (UUID: %s) сейчас не в сети. Невозможно восстановить контрольную точку.
+command.minezero.restore_starting=Ручное восстановление контрольной точки для игрока-якоря: %s. Мир будет возвращён к контрольной точке.
+message.minezero.restore_broadcast=Восстановление контрольной точки запущено вручную! Возврат к последней контрольной точке.
+message.minezero.flute_disabled=Флейта-артефакт отключена игровым правилом.
+message.minezero.flute_cooldown=Флейта-артефакт перезаряжается!
+message.minezero.flute_checkpoint_set=Контрольная точка установлена с помощью флейты-артефакта!
+message.minezero.example_keybind=Нажата клавиша примера!

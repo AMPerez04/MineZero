@@ -1,0 +1,18 @@
+item.minezero.artifact_flute.name=Flûte artefact
+
+key.categories.minezero=Raccourcis MineZero
+key.minezero.example_action=Action d'exemple
+key.minezero.self_damage=Se blesser avec son arme
+
+command.minezero.player_only=Cette commande ne peut être exécutée que par un joueur.
+command.minezero.checkpoint_set_self=Point de contrôle défini pour vous !
+command.minezero.checkpoint_set_other=Point de contrôle défini pour %s !
+command.minezero.anchor_set=Joueur ancre défini sur %s
+command.minezero.restore_no_anchor=Aucun joueur ancre n'est défini. Impossible de restaurer le point de contrôle.
+command.minezero.restore_anchor_offline=Le joueur ancre (UUID : %s) n'est pas connecté. Impossible de restaurer le point de contrôle.
+command.minezero.restore_starting=Restauration manuelle du point de contrôle pour le joueur ancre : %s. Le monde va être réinitialisé au point de contrôle.
+message.minezero.restore_broadcast=La restauration du point de contrôle a été déclenchée manuellement ! Réinitialisation au dernier point de contrôle.
+message.minezero.flute_disabled=La Flûte artefact est actuellement désactivée par une règle de jeu.
+message.minezero.flute_cooldown=La Flûte artefact est en recharge !
+message.minezero.flute_checkpoint_set=Point de contrôle défini avec la Flûte artefact !
+message.minezero.example_keybind=Touche d'exemple pressée !

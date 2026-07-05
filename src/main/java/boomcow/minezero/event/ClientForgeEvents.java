@@ -5,7 +5,7 @@ import boomcow.minezero.input.KeyBindings;
 import boomcow.minezero.network.PacketHandler;
 import boomcow.minezero.network.SelfDamagePacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -29,7 +29,7 @@ public class ClientForgeEvents {
                 // isPressed() acts like consumeClick() in 1.12.2 (reads and resets state)
                 while (KeyBindings.EXAMPLE_ACTION_KEY.isPressed()) {
                     LOGGER.info("Example Action Key Pressed!");
-                    mc.player.sendMessage(new TextComponentString("Example Keybind Pressed!"));
+                    mc.player.sendMessage(new TextComponentTranslation("message.minezero.example_keybind"));
                 }
 
                 while (KeyBindings.SELF_DAMAGE_KEY.isPressed()) {

@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Config: hard rename — Forge regenerates `minezero.cfg` with the new `sounds.restoreSound` key at its default. The legacy values `CLASSIC`/`ALTERNATE` are still accepted if set manually.
 
 ### Added
+- Localization: all player-facing messages now use translation keys, with translations for Simplified Chinese (zh_cn), Russian (ru_ru), Brazilian Portuguese (pt_br), German (de_de), Spanish (es_es), French (fr_fr), Japanese (ja_jp), and Korean (ko_kr).
 - Initial release of MineZero.
 - Checkpoint system that saves player and world state.
 - Anchor player system to trigger world resets.

@@ -1,0 +1,18 @@
+item.minezero.artifact_flute.name=아티팩트 플루트
+
+key.categories.minezero=MineZero 단축키
+key.minezero.example_action=예시 동작
+key.minezero.self_damage=무기로 자해하기
+
+command.minezero.player_only=이 명령어는 플레이어만 실행할 수 있습니다.
+command.minezero.checkpoint_set_self=자신의 체크포인트를 설정했습니다!
+command.minezero.checkpoint_set_other=%s의 체크포인트를 설정했습니다!
+command.minezero.anchor_set=앵커 플레이어를 %s(으)로 설정했습니다
+command.minezero.restore_no_anchor=앵커 플레이어가 설정되지 않았습니다. 체크포인트를 복원할 수 없습니다.
+command.minezero.restore_anchor_offline=앵커 플레이어(UUID: %s)가 현재 접속해 있지 않습니다. 체크포인트를 복원할 수 없습니다.
+command.minezero.restore_starting=앵커 플레이어 %s의 체크포인트를 수동으로 복원합니다. 월드가 체크포인트로 초기화됩니다.
+message.minezero.restore_broadcast=체크포인트 복원이 수동으로 실행되었습니다! 마지막 체크포인트로 초기화합니다.
+message.minezero.flute_disabled=아티팩트 플루트가 게임 규칙에 의해 비활성화되어 있습니다.
+message.minezero.flute_cooldown=아티팩트 플루트가 재사용 대기 중입니다!
+message.minezero.flute_checkpoint_set=아티팩트 플루트로 체크포인트를 설정했습니다!
+message.minezero.example_keybind=예시 키를 눌렀습니다!

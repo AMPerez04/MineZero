@@ -1,0 +1,18 @@
+item.minezero.artifact_flute.name=Flauta artefacto
+
+key.categories.minezero=Controles de MineZero
+key.minezero.example_action=Acción de ejemplo
+key.minezero.self_damage=Dañarte con tu arma
+
+command.minezero.player_only=Este comando solo puede ser ejecutado por un jugador.
+command.minezero.checkpoint_set_self=¡Punto de control establecido para ti!
+command.minezero.checkpoint_set_other=¡Punto de control establecido para %s!
+command.minezero.anchor_set=Jugador ancla establecido en %s
+command.minezero.restore_no_anchor=No hay ningún jugador ancla establecido. No se puede restaurar el punto de control.
+command.minezero.restore_anchor_offline=El jugador ancla (UUID: %s) no está conectado. No se puede restaurar el punto de control.
+command.minezero.restore_starting=Restaurando manualmente el punto de control para el jugador ancla: %s. El mundo se restablecerá al punto de control.
+message.minezero.restore_broadcast=¡La restauración del punto de control se ha activado manualmente! Restableciendo al último punto de control.
+message.minezero.flute_disabled=La Flauta artefacto está desactivada por una regla de juego.
+message.minezero.flute_cooldown=¡La Flauta artefacto está en enfriamiento!
+message.minezero.flute_checkpoint_set=¡Punto de control establecido con la Flauta artefacto!
+message.minezero.example_keybind=¡Tecla de ejemplo pulsada!

@@ -1,0 +1,18 @@
+item.minezero.artifact_flute.name=Artifact Flute
+
+key.categories.minezero=MineZero Keybinds
+key.minezero.example_action=Example Action
+key.minezero.self_damage=Damage Self With Weapon
+
+command.minezero.player_only=This command can only be run by a player.
+command.minezero.checkpoint_set_self=Checkpoint set for yourself!
+command.minezero.checkpoint_set_other=Checkpoint set for %s!
+command.minezero.anchor_set=Anchor player set to %s
+command.minezero.restore_no_anchor=No anchor player is set. Cannot restore the checkpoint.
+command.minezero.restore_anchor_offline=The anchor player (UUID: %s) is not currently online. Cannot restore the checkpoint.
+command.minezero.restore_starting=Manually restoring checkpoint for anchor player: %s. World will reset to checkpoint.
+message.minezero.restore_broadcast=The checkpoint restore has been manually triggered! Resetting to the last checkpoint.
+message.minezero.flute_disabled=The Artifact Flute is currently disabled by a game rule.
+message.minezero.flute_cooldown=Artifact Flute is on cooldown!
+message.minezero.flute_checkpoint_set=Checkpoint set using the Artifact Flute!
+message.minezero.example_keybind=Example Keybind Pressed!
