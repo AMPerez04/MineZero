@@ -19,12 +19,12 @@ public class SetCheckpointCommand {
                             try {
                                 player = source.getPlayerOrException();
                             } catch (Exception e) {
-                                source.sendFailure(Component.literal("This command can only be run by a player."));
+                                source.sendFailure(Component.translatable("command.minezero.player_only"));
                                 return 0;
                             }
 
                             CheckpointManager.setCheckpoint(player);
-                            source.sendSuccess(() -> Component.literal("Checkpoint set for yourself!"), true);
+                            source.sendSuccess(() -> Component.translatable("command.minezero.checkpoint_set_self"), true);
                             return 1;
                         })
                         .then(Commands.argument("target", EntityArgument.player())
@@ -33,7 +33,7 @@ public class SetCheckpointCommand {
                                     ServerPlayer targetPlayer = EntityArgument.getPlayer(context, "target");
 
                                     CheckpointManager.setCheckpoint(targetPlayer);
-                                    source.sendSuccess(() -> Component.literal("Checkpoint set for " + targetPlayer.getName().getString() + "!"), true);
+                                    source.sendSuccess(() -> Component.translatable("command.minezero.checkpoint_set_other", targetPlayer.getName()), true);
                                     return 1;
                                 }))
         );

@@ -23,7 +23,7 @@ public class ArtifactFluteItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!level.getGameRules().getBoolean(ModGameRules.ARTIFACT_FLUTE_ENABLED)) {
             if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.displayClientMessage(Component.literal("The Artifact Flute is currently disabled by a game rule."), false);
+                serverPlayer.displayClientMessage(Component.translatable("message.minezero.flute_disabled"), false);
             }
             return InteractionResultHolder.fail(player.getItemInHand(hand));
         }
@@ -34,7 +34,7 @@ public class ArtifactFluteItem extends Item {
                     int cooldownSeconds = level.getGameRules().getInt(ModGameRules.ARTIFACT_FLUTE_COOLDOWN_SECONDS);
                     int cooldownTicks = cooldownSeconds * 20;
                     if (serverPlayer.getCooldowns().isOnCooldown(this)) {
-                        serverPlayer.displayClientMessage(Component.literal("Artifact Flute is on cooldown!"), true);
+                        serverPlayer.displayClientMessage(Component.translatable("message.minezero.flute_cooldown"), true);
                         return InteractionResultHolder.fail(player.getItemInHand(hand));
                     } else {
                         serverPlayer.getCooldowns().addCooldown(this, cooldownTicks);
@@ -47,7 +47,7 @@ public class ArtifactFluteItem extends Item {
                         1.0f,
                         1.0f
                 );
-                serverPlayer.displayClientMessage(Component.literal("Checkpoint set using the Artifact Flute!"), true);
+                serverPlayer.displayClientMessage(Component.translatable("message.minezero.flute_checkpoint_set"), true);
             }
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
