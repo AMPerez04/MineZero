@@ -26,8 +26,7 @@ public class SetAnchorCommand {
                             CheckpointData data = CheckpointData.get(level);
                             data.setAnchorPlayerUUID(target.getUUID());
                             context.getSource().sendSuccess(
-                                    () -> Component
-                                            .literal("Anchor player set to " + target.getName().getString()),
+                                    () -> Component.translatable("command.minezero.anchor_set", target.getName()),
                                     true);
                             return 1;
                         }));

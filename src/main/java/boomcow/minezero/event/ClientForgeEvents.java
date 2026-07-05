@@ -26,7 +26,7 @@ public class ClientForgeEvents {
 
                 while (KeyBindings.EXAMPLE_ACTION_KEY.consumeClick()) {
                     LOGGER.info("Example Action Key Pressed!");
-                    mc.player.sendSystemMessage(Component.literal("Example Keybind Pressed!"));
+                    mc.player.sendSystemMessage(Component.translatable("message.minezero.example_keybind"));
                 }
 
                 while (KeyBindings.SELF_DAMAGE_KEY.consumeClick()) {

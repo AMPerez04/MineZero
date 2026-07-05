@@ -31,8 +31,7 @@ public class RestoreCheckpointCommand {
                     UUID anchorPlayerUUID = data.getAnchorPlayerUUID();
 
                     if (anchorPlayerUUID == null) {
-                        context.getSource().sendFailure(Component.literal(
-                                "No anchor player is set. Cannot restore the checkpoint."));
+                        context.getSource().sendFailure(Component.translatable("command.minezero.restore_no_anchor"));
                         LOGGER.warn("Attempted to restore checkpoint, but no anchor player is set.");
                         return 0;
                     }
@@ -40,17 +39,16 @@ public class RestoreCheckpointCommand {
                     ServerPlayer anchorPlayer = level.getServer().getPlayerList().getPlayer(anchorPlayerUUID);
                     if (anchorPlayer == null) {
 
-                        context.getSource().sendFailure(Component.literal("The anchor player (UUID: "
-                                + anchorPlayerUUID.toString()
-                                + ") is not currently online. Cannot restore the checkpoint with current implementation."));
+                        context.getSource().sendFailure(Component.translatable(
+                                "command.minezero.restore_anchor_offline", anchorPlayerUUID.toString()));
                         LOGGER.warn("Attempted to restore checkpoint for anchor {}, but player is not online.",
                                 anchorPlayerUUID);
                         return 0;
                     }
 
                     context.getSource().sendSuccess(
-                            () -> Component.literal("Manually restoring checkpoint for anchor player: "
-                                    + anchorPlayer.getName().getString() + ". World will reset to checkpoint."),
+                            () -> Component.translatable("command.minezero.restore_starting",
+                                    anchorPlayer.getName()),
                             true);
                     LOGGER.info(
                             "Manually restoring checkpoint for anchor player: {} (UUID: {}) by command sender: {}",
@@ -60,8 +58,7 @@ public class RestoreCheckpointCommand {
                     level.getServer().execute(() -> {
                         CheckpointManager.restoreCheckpoint(anchorPlayer);
                         level.getServer().getPlayerList().getPlayers().forEach(p -> {
-                            p.displayClientMessage(Component.literal(
-                                    "The checkpoint restore has been manually triggered! Resetting to the last checkpoint."),
+                            p.displayClientMessage(Component.translatable("message.minezero.restore_broadcast"),
                                     false);
                         });
                         LOGGER.info("Checkpoint restore manually triggered and checkpoint restored.");
