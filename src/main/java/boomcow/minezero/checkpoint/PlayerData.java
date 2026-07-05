@@ -28,6 +28,7 @@ public class PlayerData {
     public int experienceLevel;
     public float experienceProgress;
     public int fireTicks;
+    public int airSupply;
     public ResourceKey<Level> dimension;
     public String gameMode;
     public double spawnX;
@@ -54,6 +55,7 @@ public class PlayerData {
         tag.putFloat("Health", health);
         tag.putInt("Hunger", hunger);
         tag.putInt("FireTicks", fireTicks);
+        tag.putInt("AirSupply", airSupply);
         tag.putString("GameMode", gameMode);
         tag.putInt("ExperienceLevel", experienceLevel);
         tag.putFloat("ExperienceProgress", experienceProgress);
@@ -99,6 +101,7 @@ public class PlayerData {
         data.health = tag.getFloat("Health");
         data.hunger = tag.getInt("Hunger");
         data.fireTicks = tag.getInt("FireTicks");
+        data.airSupply = tag.getInt("AirSupply");
         data.spawnX = tag.getDouble("SpawnX");
         data.spawnY = tag.getDouble("SpawnY");
         data.spawnZ = tag.getDouble("SpawnZ");

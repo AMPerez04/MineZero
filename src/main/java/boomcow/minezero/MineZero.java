@@ -162,6 +162,7 @@ public class MineZero {
             pDataForNewPlayer.experienceLevel = player.experienceLevel;
             pDataForNewPlayer.experienceProgress = player.experienceProgress;
             pDataForNewPlayer.fireTicks = player.getRemainingFireTicks();
+            pDataForNewPlayer.airSupply = player.getAirSupply();
 
             BlockPos spawn = player.getRespawnPosition();
             ResourceKey<Level> spawnDim = player.getRespawnDimension();

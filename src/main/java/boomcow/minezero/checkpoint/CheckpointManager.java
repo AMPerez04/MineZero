@@ -78,6 +78,7 @@ public class CheckpointManager {
             pdataObject.experienceLevel = player.experienceLevel;
             pdataObject.experienceProgress = player.experienceProgress;
             pdataObject.fireTicks = player.getRemainingFireTicks();
+            pdataObject.airSupply = player.getAirSupply();
 
             BlockPos spawn = player.getRespawnPosition();
             ResourceKey<Level> spawnDim = player.getRespawnDimension();
@@ -412,6 +413,7 @@ public class CheckpointManager {
 
 
                     player.setRemainingFireTicks(pdata.fireTicks);
+                    player.setAirSupply(pdata.airSupply);
                     if (pdata.gameMode != null) {
                         switch (pdata.gameMode.toLowerCase()) {
                             case "survival" -> player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
