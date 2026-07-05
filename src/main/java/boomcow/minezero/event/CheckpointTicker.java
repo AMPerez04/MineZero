@@ -56,12 +56,12 @@ public class CheckpointTicker {
             return;
         }
 
-        var useRandomRule = level.getGameRules().getRule(ModGameRules.USE_RANDOM_INTERVAL);
+        var useRandomRule = level.getGameRules().getRule(ModGameRules.AUTO_CHECKPOINT_RANDOM_INTERVAL_ENABLED);
         boolean useRandom = useRandomRule != null && useRandomRule.get();
 
         if (useRandom && !randomIntervalSelected) {
-            var lowerRule = level.getGameRules().getRule(ModGameRules.RANDOM_CHECKPOINT_LOWER_BOUND);
-            var upperRule = level.getGameRules().getRule(ModGameRules.RANDOM_CHECKPOINT_UPPER_BOUND);
+            var lowerRule = level.getGameRules().getRule(ModGameRules.AUTO_CHECKPOINT_RANDOM_MIN_SECONDS);
+            var upperRule = level.getGameRules().getRule(ModGameRules.AUTO_CHECKPOINT_RANDOM_MAX_SECONDS);
             int lowerSeconds = lowerRule != null ? lowerRule.get() : 600;
             int upperSeconds = upperRule != null ? upperRule.get() : 1200;
             int lowerTicks = lowerSeconds * 20;
@@ -77,7 +77,7 @@ public class CheckpointTicker {
             LOGGER.debug("Using random interval: {} ticks (lower bound: {} ticks, upper bound: {} ticks)",
                     intervalTicks, lowerTicks, upperTicks);
         } else if (!useRandom) {
-            var fixedRule = level.getGameRules().getRule(ModGameRules.CHECKPOINT_FIXED_INTERVAL);
+            var fixedRule = level.getGameRules().getRule(ModGameRules.AUTO_CHECKPOINT_INTERVAL_SECONDS);
             int fixedSeconds = fixedRule != null ? fixedRule.get() : 600;
             intervalTicks = fixedSeconds * 20;
         }

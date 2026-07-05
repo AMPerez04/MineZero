@@ -24,48 +24,70 @@ If you're a fan of _Re:Zero_, you might want to check out [_Re:Zero Experience_]
 
 While _MineZero_ focuses on **Return by Death**, _Re:Zero Experience_ brings in **Witch Factors, Divine Protections, and battles against major enemies** from the anime. The mods aren’t officially integrated, but they both add different pieces of the _Re:Zero_ world to Minecraft. If you're into the series, it's worth a look.
 
-## Gamerules + Commands
+## Commands
 
-### Auto Checkpoints
+All commands require OP level 2.
+
+*   `/setcheckpoint [player]` → Saves a checkpoint and sets the anchor player.
+*   `/setanchor <player>` → Sets the anchor player only (does not save a checkpoint).
+*   `/restorecheckpoint` → Manually restores the last checkpoint.
+
+## Gamerules
+
+### Automatic Checkpoints
 
 *   **Usage:** `/gamerule autoCheckpointEnabled true`
 *   **Description:** Enables automatic checkpoint creation. When set to true, checkpoints will be automatically created based on the configured intervals.
 
-### Fixed Checkpoint Interval
+### Auto Checkpoint Interval (seconds)
 
-*   **Usage:** `/gamerule checkpointFixedInterval <seconds>`
+*   **Usage:** `/gamerule autoCheckpointIntervalSeconds <seconds>`
 *   **Description:** Sets the fixed interval (in seconds) between each checkpoint when not using random intervals.
 
-### Use Random Interval
+### Use Random Checkpoint Interval
 
-*   **Usage:** `/gamerule useRandomCheckpointInterval true`
+*   **Usage:** `/gamerule autoCheckpointRandomIntervalEnabled true`
 *   **Description:** When enabled, the mod will choose a random interval for checkpoint creation instead of using a fixed value.
 
-### Random Checkpoint Lower Bound
+### Random Interval Minimum (seconds)
 
-*   **Usage:** `/gamerule randomCheckpointLowerBound <seconds>`
+*   **Usage:** `/gamerule autoCheckpointRandomMinSeconds <seconds>`
 *   **Description:** Defines the minimum number of seconds for the random checkpoint interval.
 
-### Random Checkpoint Upper Bound
+### Random Interval Maximum (seconds)
 
-*   **Usage:** `/gamerule randomCheckpointUpperBound <seconds>`
+*   **Usage:** `/gamerule autoCheckpointRandomMaxSeconds <seconds>`
 *   **Description:** Defines the maximum number of seconds for the random checkpoint interval.
 
-### Flute Cooldown Enabled
+### Artifact Flute Cooldown
 
-*   **Usage:** `/gamerule fluteCooldownEnabled true`
+*   **Usage:** `/gamerule artifactFluteCooldownEnabled true`
 *   **Description:** Enables a cooldown period after using the Artifact Flute to prevent rapid re-use.
 
-### Flute Cooldown Duration
+### Artifact Flute Cooldown (seconds)
 
-*   **Usage:** `/gamerule fluteCooldownDuration <seconds>`
+*   **Usage:** `/gamerule artifactFluteCooldownSeconds <seconds>`
 *   **Description:** Sets the duration (in seconds) of the cooldown period for the Artifact Flute.
-* 
-### Random Anchor
 
-*   **Usage:** `/gamerule enableRandomAnchor false`
-*   **Description:** Enables wether the checkpoint should be set by random players.
+### Artifact Flute Enabled
 
-### All Players Return By Death
-*   **Usage:** `/gamerule enableAllPlayersRBD false`
-*   **Description:** Enables wether the checkpoint shall be restored if any player dies (true) or only when the anchor dies (false).
+*   **Usage:** `/gamerule artifactFluteEnabled true`
+*   **Description:** Enables or disables the Artifact Flute entirely.
+
+### Checkpoint on World Creation
+
+*   **Usage:** `/gamerule checkpointOnWorldCreation true`
+*   **Description:** Automatically sets a checkpoint when a new world is created.
+
+### Random Anchor Player
+
+*   **Usage:** `/gamerule randomAnchorEnabled false`
+*   **Description:** Randomly picks a new anchor player each time an automatic checkpoint is set.
+
+### Any Player Death Triggers Restore
+*   **Usage:** `/gamerule anyPlayerDeathTriggersRestore false`
+*   **Description:** Whether the checkpoint is restored if any player dies (true) or only when the anchor player dies (false).
+
+### Checkpoint When All Players Sleep
+*   **Usage:** `/gamerule checkpointOnSleep false`
+*   **Description:** Sets a checkpoint when all players sleep and the night is skipped.

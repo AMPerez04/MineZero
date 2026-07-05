@@ -36,7 +36,7 @@ public class DeathEventHandler {
             if (data.getAnchorPlayerUUID() == null
                     ||
                 (!player.getUUID().equals(data.getAnchorPlayerUUID()) &&
-                        !level.getGameRules().getRule(ModGameRules.ALL_PLAYERS_RBD).get())
+                        !level.getGameRules().getRule(ModGameRules.ANY_PLAYER_DEATH_TRIGGERS_RESTORE).get())
                 ) // Check wether gamerule is enabled, if not, it does not matter who dies --> activate your logic anyway
             {
 
@@ -55,10 +55,11 @@ public class DeathEventHandler {
                 }
             });
 
-            String chime = ConfigHandler.getDeathChime();
-            if ("CLASSIC".equalsIgnoreCase(chime)) {
+            String restoreSound = ConfigHandler.getRestoreSound();
+            // "CLASSIC"/"ALTERNATE" accepted as legacy values from pre-rename configs.
+            if ("death_chime".equalsIgnoreCase(restoreSound) || "CLASSIC".equalsIgnoreCase(restoreSound)) {
                 playClassicChime(player);
-            } else if ("ALTERNATE".equalsIgnoreCase(chime)) {
+            } else if ("alt_death_chime".equalsIgnoreCase(restoreSound) || "ALTERNATE".equalsIgnoreCase(restoreSound)) {
                 playAlternateChime(player);
             }
 

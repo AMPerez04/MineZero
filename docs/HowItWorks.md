@@ -15,7 +15,7 @@ This document explains the design and inner workings of MineZero's checkpoint an
   - World time and weather (daytime, game time, raining/thundering, clear weather time).
   - Block changes, block entities, and tracked differences in chunks.
   - Entities and items on the ground, across dimensions, plus mob aggro targets.
-- When the anchor player dies (or RBD is manually triggered), MineZero restores the saved checkpoint across players, world time/weather, blocks, entities, and items.
+- When the anchor player dies (or a restore is manually triggered), MineZero restores the saved checkpoint across players, world time/weather, blocks, entities, and items.
 
 ---
 
@@ -42,9 +42,9 @@ This document explains the design and inner workings of MineZero's checkpoint an
   - `event/CheckpointTicker.java`: Periodic auto-checkpoints via gamerules (fixed or random intervals). Also assigns an anchor if missing.
   - `event/ExplosionEventHandler.java` and `event/NonPlayerChangeHandler.java`: Integrations to keep diffs consistent around explosions and non-player changes.
 - Commands and items:
-  - `/setcheckpoint`: `command/SetCheckPointCommand.java`.
-  - `/setSubaruPlayer`: set anchor explicitly, `command/SetSubaruPlayer.java`.
-  - `/triggerRBD`: manually trigger restore, `command/TriggerRBD.java`.
+  - `/setcheckpoint`: `command/SetCheckpointCommand.java`.
+  - `/setanchor`: set anchor explicitly, `command/SetAnchorCommand.java`.
+  - `/restorecheckpoint`: manually trigger restore, `command/RestoreCheckpointCommand.java`.
   - Artifact Flute: `items/ArtifactFluteItem.java` calls `setCheckpoint` and enforces gamerules like cooldown/enable.
 
 ---
@@ -90,24 +90,42 @@ This document explains the design and inner workings of MineZero's checkpoint an
 
 ---
 
+## Naming Convention
+
+One convention covers commands, gamerules, and config keys across all branches:
+
+- **Commands**: all lowercase, no separators, matching vanilla commands like `setworldspawn` — e.g. `setcheckpoint`, `setanchor`, `restorecheckpoint`. Command classes are named `<Command>Command` in UpperCamelCase, e.g. `SetAnchorCommand`.
+- **Gamerules**: camelCase, matching vanilla gamerules like `doMobSpawning`. Feature toggles end in `Enabled` (`randomAnchorEnabled`); event-driven checkpoint triggers read `checkpointOn<Event>` (`checkpointOnSleep`); other booleans read as plain-English predicates (`anyPlayerDeathTriggersRestore`). Integer rules end with their unit (`autoCheckpointIntervalSeconds`).
+- **Config keys**: camelCase, grouped by TOML section — e.g. `[sounds] restoreSound`. String values match in-game IDs (e.g. sound IDs like `death_chime`) rather than invented labels.
+- **Java constants**: SCREAMING_SNAKE form of the registered key — key `randomAnchorEnabled` is constant `RANDOM_ANCHOR_ENABLED`.
+- **Lang keys**: match registered identifiers exactly — `gamerule.randomAnchorEnabled` plus a `.description` entry.
+- **User-facing text**: plain English; the death-triggering player is always the "anchor player". Re:Zero flavor (Subaru, Return By Death) stays in the mod description and store text only — never in commands, gamerules, config keys, or messages.
+
+---
+
 ## Gamerules
 
 Defined in `ModGameRules.java`:
 - `autoCheckpointEnabled` (bool): enable periodic auto checkpoints.
-- `checkpointFixedInterval` (int, seconds): fixed interval if random disabled.
-- `useRandomCheckpointInterval` (bool): whether to randomize interval.
-- `randomCheckpointLowerBound` / `randomCheckpointUpperBound` (int, seconds): bounds for randomized interval.
-- `fluteCooldownEnabled` (bool) and `fluteCooldownDuration` (int, seconds): Artifact Flute cooldown.
+- `autoCheckpointIntervalSeconds` (int, seconds): fixed interval if random disabled.
+- `autoCheckpointRandomIntervalEnabled` (bool): whether to randomize the interval.
+- `autoCheckpointRandomMinSeconds` / `autoCheckpointRandomMaxSeconds` (int, seconds): bounds for randomized interval.
+- `artifactFluteCooldownEnabled` (bool) and `artifactFluteCooldownSeconds` (int, seconds): Artifact Flute cooldown.
 - `artifactFluteEnabled` (bool): enable/disable the Artifact Flute entirely.
-- `setCheckpointOnWorldCreation` (bool): set a checkpoint when the world is created.
+- `checkpointOnWorldCreation` (bool): set a checkpoint when the world is created.
+- `randomAnchorEnabled` (bool): randomly pick a new anchor each automatic checkpoint.
+- `anyPlayerDeathTriggersRestore` (bool): any player's death restores the checkpoint, not just the anchor's.
+- `checkpointOnSleep` (bool): set a checkpoint when all players sleep and the night is skipped.
 
 ---
 
 ## Commands
 
 - `/setcheckpoint [player]` (OP 2): Create a checkpoint for yourself or a target player; sets anchor to that player.
-- `/setSubaruPlayer <player>` (OP 2): Explicitly set the anchor player.
-- `/triggerRBD` (OP 2): Manually trigger Return By Death restore.
+- `/setanchor <player>` (OP 2): Explicitly set the anchor player (does not save a checkpoint).
+- `/restorecheckpoint` (OP 2): Manually restore the last checkpoint.
+
+Deprecated aliases `/setSubaruPlayer` and `/triggerRBD` are still registered for one release cycle and will be removed; see CHANGELOG.
 
 ---
 

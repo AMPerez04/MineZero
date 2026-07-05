@@ -1,7 +1,6 @@
 package boomcow.minezero.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.commands.arguments.EntityArgument;
 import boomcow.minezero.checkpoint.CheckpointManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -9,11 +8,11 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-public class SetCheckPointCommand {
+public class SetCheckpointCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("setcheckpoint")
-                        .requires(cs -> cs.hasPermission(2)) 
+                        .requires(cs -> cs.hasPermission(2))
                         .executes(context -> {
                             CommandSourceStack source = context.getSource();
                             ServerPlayer player;
