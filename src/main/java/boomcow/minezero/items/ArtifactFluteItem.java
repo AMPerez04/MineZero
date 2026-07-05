@@ -29,9 +29,9 @@ public class ArtifactFluteItem extends Item {
         }
         if (!level.isClientSide) {
             if (player instanceof ServerPlayer serverPlayer) {
-                boolean cooldownEnabled = level.getGameRules().getBoolean(ModGameRules.FLUTE_COOLDOWN_ENABLED);
+                boolean cooldownEnabled = level.getGameRules().getBoolean(ModGameRules.ARTIFACT_FLUTE_COOLDOWN_ENABLED);
                 if (cooldownEnabled) {
-                    int cooldownSeconds = level.getGameRules().getInt(ModGameRules.FLUTE_COOLDOWN_DURATION);
+                    int cooldownSeconds = level.getGameRules().getInt(ModGameRules.ARTIFACT_FLUTE_COOLDOWN_SECONDS);
                     int cooldownTicks = cooldownSeconds * 20;
                     if (serverPlayer.getCooldowns().isOnCooldown(this)) {
                         serverPlayer.displayClientMessage(Component.literal("Artifact Flute is on cooldown!"), true);

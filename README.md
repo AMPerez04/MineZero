@@ -18,7 +18,7 @@
 * **Anchor Player System**
 
   * Only the **anchor player’s death** triggers a reset.
-  * The anchor player is set automatically when they create a checkpoint.
+  * The anchor player is set automatically when they create a checkpoint, or explicitly with `/setanchor`.
 
 * **World Reset on Death**
 
@@ -43,7 +43,13 @@ This repository maintains multiple branches for different versions and mod loade
 
 ## Commands
 
-* `/setcheckpoint` → Sets the checkpoint for the executing player (requires OP level 2).
+All commands require OP level 2.
+
+* `/setcheckpoint [player]` → Saves a checkpoint and sets the anchor to that player.
+* `/setanchor <player>` → Sets the anchor player only (does not save a checkpoint).
+* `/restorecheckpoint` → Manually restores the last checkpoint.
+
+Deprecated aliases `/setSubaruPlayer` and `/triggerRBD` still work for one release cycle; see [CHANGELOG.md](CHANGELOG.md).
 
 ---
 

@@ -15,23 +15,26 @@ public class ConfigHandler {
     }
 
     public static class CommonConfig {
-        public final ModConfigSpec.ConfigValue<String> deathChime;
+        public final ModConfigSpec.ConfigValue<String> restoreSound;
 
         public CommonConfig(ModConfigSpec.Builder builder) {
-            builder.comment("General settings").push("general");
+            builder.comment("Sound settings").push("sounds");
 
-            deathChime = builder
-                    .comment("Death Chime Options: CLASSIC, ALTERNATE. Default: CLASSIC")
-                    .define("deathChime", "CLASSIC");
+            restoreSound = builder
+                    .comment("Sound played when the anchor player dies and the checkpoint is restored.",
+                            "Valid values (matching the mod's sound IDs):",
+                            "  \"death_chime\"     - the classic restore chime",
+                            "  \"alt_death_chime\" - the alternate restore chime")
+                    .define("restoreSound", "death_chime");
 
             builder.pop();
         }
     }
-    public static String getDeathChime() {
-        if (COMMON != null && COMMON.deathChime != null) {
-            return COMMON.deathChime.get();
+    public static String getRestoreSound() {
+        if (COMMON != null && COMMON.restoreSound != null) {
+            return COMMON.restoreSound.get();
         }
-        return "CLASSIC";
+        return "death_chime";
     }
     public static void onLoad(final ModConfigEvent.Loading event) {
         System.out.println("MineZero Common Config Loaded: " + event.getConfig().getFileName());

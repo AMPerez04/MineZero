@@ -3,9 +3,9 @@ package boomcow.minezero;
 import boomcow.minezero.checkpoint.CheckpointData;
 import boomcow.minezero.checkpoint.CheckpointManager;
 import boomcow.minezero.checkpoint.PlayerData;
-import boomcow.minezero.command.SetCheckPointCommand;
-import boomcow.minezero.command.SetSubaruPlayer;
-import boomcow.minezero.command.TriggerRBD;
+import boomcow.minezero.command.RestoreCheckpointCommand;
+import boomcow.minezero.command.SetAnchorCommand;
+import boomcow.minezero.command.SetCheckpointCommand;
 import boomcow.minezero.event.*;
 import boomcow.minezero.input.KeyBindings;
 import boomcow.minezero.items.ArtifactFluteItem;
@@ -102,9 +102,9 @@ public class MineZero {
     }
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
-        SetCheckPointCommand.register(event.getDispatcher());
-        SetSubaruPlayer.register(event.getDispatcher());
-        TriggerRBD.register(event.getDispatcher());
+        SetCheckpointCommand.register(event.getDispatcher());
+        SetAnchorCommand.register(event.getDispatcher());
+        RestoreCheckpointCommand.register(event.getDispatcher());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -137,7 +137,7 @@ public class MineZero {
 
         LOGGER.info("[MineZero][LOGIN] Player {} (UUID: {}) logged in.", player.getName().getString(), player.getUUID());
 
-        if (player.level().getGameRules().getBoolean(ModGameRules.SET_CHECKPOINT_ON_WORLD_CREATION) &&
+        if (player.level().getGameRules().getBoolean(ModGameRules.CHECKPOINT_ON_WORLD_CREATION) &&
                 data.getAnchorPlayerUUID() == null &&
                 data.getPlayerData(player.getUUID(), lookupProvider) == null) {
 
