@@ -25,7 +25,7 @@ public class ArtifactFluteItem extends Item {
 
         if (!world.getGameRules().getBoolean(ModGameRules.ARTIFACT_FLUTE_ENABLED)) {
             if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayer) {
-                serverPlayer.sendMessage(Text.literal("The Artifact Flute is currently disabled by a game rule."), false);
+                serverPlayer.sendMessage(Text.translatable("message.minezero.flute_disabled"), false);
             }
             return ActionResult.FAIL;
         }
@@ -38,7 +38,7 @@ public class ArtifactFluteItem extends Item {
                     int cooldownTicks = cooldownSeconds * 20;
 
                     if (serverPlayer.getItemCooldownManager().isCoolingDown(this)) {
-                        serverPlayer.sendMessage(Text.literal("Artifact Flute is on cooldown!"), true);
+                        serverPlayer.sendMessage(Text.translatable("message.minezero.flute_cooldown"), true);
                         return ActionResult.FAIL;
                     } else {
                         serverPlayer.getItemCooldownManager().set(this, cooldownTicks);
@@ -56,7 +56,7 @@ public class ArtifactFluteItem extends Item {
                         1.0f
                 );
 
-                serverPlayer.sendMessage(Text.literal("Checkpoint set using the Artifact Flute!"), true);
+                serverPlayer.sendMessage(Text.translatable("message.minezero.flute_checkpoint_set"), true);
             }
         }
         return ActionResult.SUCCESS;
